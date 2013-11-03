@@ -19,5 +19,19 @@
 #
 #
 
+import cPickle
+import gzip
+import os
+import sys
+import time
+
+import numpy
+
+import theano
+import theano.tensor as T
+from theano.tensor.shared_randomstreams import RandomStreams
+
+
+
 
 
