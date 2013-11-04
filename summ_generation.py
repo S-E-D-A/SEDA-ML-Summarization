@@ -57,13 +57,20 @@ class SummaryGeneration:
 		self.AF = numpy.zeros(shape=(i,n))
 
 	
-	def buildAFMatrix(self, hiddenLayer):
+	def buildAFMatrix(self, hiddenLayer, A_one, A_two, A_three):
 		"""
 		:desc: Summary Generation AF Matrix Generator
 
 		:param hiddenLayer: hidden layer in vector format
+
+		:param A_one: pairwise connections in first layer
+
+		:param A_two: pairwise connections in second layer
+
+		:param A_three: pairwise connections in third layer
 		"""
 		
+			
 
 
 
