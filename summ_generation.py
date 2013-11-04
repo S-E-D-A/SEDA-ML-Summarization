@@ -35,26 +35,35 @@ from theano.tensor.shared_randomstreams import RandomStreams
 
 class SummaryGeneration:
 
-	def __init__(self, vocabulary, numNodes, lambd, N_s)
-	"""
-	:desc: Summary Generation Constructor
+	def __init__(self, vocabulary, numNodes, lambd, N_s):
+		"""
+		:desc: Summary Generation Constructor
 	
-	:param vocabulary: list of words in vocabulary
+		:param vocabulary: list of words in vocabulary
 	
-	:param numNodes: number of nodes in H3
+		:param numNodes: number of nodes in H3
 	
-	:param lambd: query word importance factor
+		:param lambd: query word importance factor
 	
-	:param N_s: max size of summary
-	"""
+		:param N_s: max size of summary
+		"""
 
-	self.vocabulary = vocabulary
-	self.i = len(vocabulary)
-	self.n = numNodes
-	self.lambd = lambd
-	self.N_s = N_s
+		self.vocabulary = vocabulary
+		self.i = len(vocabulary)
+		self.n = numNodes
+		self.lambd = lambd
+		self.N_s = N_s
 
-	self.AF = numpy.zeros(shape=(i,n)
+		self.AF = numpy.zeros(shape=(i,n))
+
+	
+	def buildAFMatrix(self, hiddenLayer):
+		"""
+		:desc: Summary Generation AF Matrix Generator
+
+		:param hiddenLayer: hidden layer in vector format
+		"""
+		
 
 
 
