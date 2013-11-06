@@ -70,9 +70,15 @@ class SummaryGeneration:
 		:param A_three: pairwise connections in third layer
 		"""
 				
-		assert len(self.vocabulary) == len(fD)
+		assert self.i == len(fD)
 
+		self.F = numpy.tile(fD, [self.i, self.n])
+		self.A_one = A_one
+		self.A_two = A_two
+		self.A_three = A_three
 	
+		self.AF = dot(dot(dot(F, A_one), A_two), A_three)
+
 
 
 
