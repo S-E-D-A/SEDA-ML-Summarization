@@ -81,8 +81,21 @@ class SummaryGeneration(object):
 		self.AF = dot(dot(dot(self.F, A_one), A_two), A_three)
 
 
+	def wordExtraction(self)
+		"""
+		:desc: Word Extraction from AF Matrix
+	
+		"""
 
+		assert self.i >= 10
 
+		self.indicesMatrix = numpy.zeros(10, self.n)
+
+		dummy = AF
+		for x in range (0, 10):
+			indices = dummy.argmax(0)
+			indicesMatrix[x,:] = indices
+			dummy[indices,range(0,self.n)] = -1000
 
 
 
