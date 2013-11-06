@@ -26,14 +26,15 @@ import sys
 import time
 
 import numpy
+from numpy import dot
 
-import theano
-import theano.tensor as T
-from theano.tensor.shared_randomstreams import RandomStreams
+# import theano
+# import theano.tensor as T
+# from theano.tensor.shared_randomstreams import RandomStreams
 
 
 
-class SummaryGeneration:
+class SummaryGeneration(object):
 
 	def __init__(self, vocabulary, numNodes, lambd, N_s):
 		"""
@@ -54,7 +55,7 @@ class SummaryGeneration:
 		self.lambd = lambd
 		self.N_s = N_s
 
-		self.AF = numpy.zeros(shape=(i,n))
+		self.AF = numpy.zeros(shape=(self.i,self.n))
 
 	
 	def buildAFMatrix(self, fD, A_one, A_two, A_three):
@@ -70,14 +71,14 @@ class SummaryGeneration:
 		:param A_three: pairwise connections in third layer
 		"""
 				
-		assert self.i == len(fD)
+		assert (1, self.i) == fD.shape
 
-		self.F = numpy.tile(fD, [self.i, self.n])
+		self.F = numpy.transpose(numpy.tile(fD, [self.n, 1]))
 		self.A_one = A_one
 		self.A_two = A_two
 		self.A_three = A_three
 	
-		self.AF = dot(dot(dot(F, A_one), A_two), A_three)
+		self.AF = dot(dot(dot(self.F, A_one), A_two), A_three)
 
 
 
