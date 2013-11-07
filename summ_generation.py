@@ -91,6 +91,7 @@ class SummaryGeneration(object):
 		assert self.i >= 10
 
 		self.indicesMatrix = numpy.zeros(shape=(10, self.n))
+		self.wordsMatrix = []
 
 		dummy = copy.deepcopy(self.AF)
 		for x in range (0, 10):
@@ -99,7 +100,14 @@ class SummaryGeneration(object):
 			dummy[indices,range(0,self.n)] = -1000
 
 		
-		
+		for x in range(0,10)
+			cur_list = []
+			for y in range(0,self.n)
+				item = self.vocabulary[self.indicesMatrix[x,y]]
+				cur_list.append(item)
+
+			self.wordsMatrix.append(cur_list)
+
 
 
 	def sentenceImportance(self, sentences, query):
