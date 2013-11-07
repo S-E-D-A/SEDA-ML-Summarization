@@ -98,6 +98,7 @@ class SummaryGeneration(object):
 			dummy[indices,range(0,self.n)] = -1000
 
 
+
 	def sentenceImportance(self, sentences):
 		"""
 		:desc: Sentence Importance Calculation
@@ -112,7 +113,16 @@ class SummaryGeneration(object):
 
 		self.sentenceImportance = numpy.zeros(shape=(1,self.t))
 
-		
+
+		for x in range(0,self.t)
+			cur_sentence = self.sentences[x]
+			numWords = len(cur_sentence)
+
+			score = 0
+
+			for i in range(0, numWords)
+				cur_word = cur_sentence[i]
+				if 
 
 		
 		
