@@ -91,22 +91,21 @@ class SummaryGeneration(object):
 		assert self.i >= 10
 
 		self.indicesMatrix = numpy.zeros(shape=(10, self.n))
-		self.wordsMatrix = []
+		self.UN = []
 
 		dummy = copy.deepcopy(self.AF)
 		for x in range (0, 10):
 			indices = dummy.argmax(axis=0)
 			self.indicesMatrix[x,:] = indices
-			dummy[indices,range(0,self.n)] = -1000
+			dummy[indices,range(0,self.n)] = -1000	
 
-		
 		for x in range(0,10):
 			cur_list = []
 			for y in range(0,self.n):
-				item = self.vocabulary[self.indicesMatrix[x,y]]
+				item = self.vocabulary[self.indicesMatrix[x,y].astype(int)]
 				cur_list.append(item)
 
-			self.wordsMatrix.append(cur_list)
+			self.UN.append(cur_list)
 
 
 
@@ -126,7 +125,7 @@ class SummaryGeneration(object):
 		self.t = len(sentences)
 		self.rolloutUN = [item for sublist in self.UN for item in sublist]
 
-		self.sentenceImportance = numpy.zeros(shape=(1,self.t))
+		self.sentenceImportanceVector = numpy.zeros(shape=(1,self.t))
 
 
 		for x in range(0,self.t):
@@ -140,14 +139,14 @@ class SummaryGeneration(object):
 				
 				w = 0
 				
-				if (cur_word in self.rolloutUN && cur_word in query):
+				if (cur_word in self.rolloutUN and cur_word in query):
 					w = self.lambd
 				elif (cur_word in self.rolloutUN):
 					w = 1
 				
 				score = score + w
 
-			self.sentenceImportance[1,x] = score
+			self.sentenceImportanceVector[0,x] = score
 		
 
 			
