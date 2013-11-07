@@ -32,15 +32,21 @@ from numpy import dot
 #import theano.tensor as T
 #from theano.tensor.shared_randomstreams import RandomStreams
 
+sys.path.append('/Users/hobeykuhn/Documents/Schoolwork/University of Michigan/MSAIL/SEDA-ML-Summarization');
+
 from summ_generation import SummaryGeneration
 
 
-vocabulary = {'cat', 'dog', 'mouse', 'fox'}
-fD = numpy.random.rand(1,4)
-A_one = numpy.random.rand(4,4)
-A_two = numpy.random.rand(4,4)
-A_three = numpy.random.rand(4,4)
+vocabulary = {'cat', 'dog', 'mouse', 'fox', 'bear', 'tiger', 'ram', 'person', 'gen', 'f', 'd', 's', 'a', 'r', 'y'}
+fD = numpy.random.rand(1,15)
+A_one = numpy.random.rand(15,15)
+A_two = numpy.random.rand(15,15)
+A_three = numpy.random.rand(15,15)
 
 
-c = SummaryGeneration(vocabulary, 4, 3, 200)
+c = SummaryGeneration(vocabulary, 15, 3, 200)
 c.buildAFMatrix(fD, A_one, A_two, A_three)
+print c.AF
+
+c.wordExtraction()
+print c.indicesMatrix
