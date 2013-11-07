@@ -126,11 +126,14 @@ class SummaryGeneration(object):
 		self.rolloutUN = [item for sublist in self.UN for item in sublist]
 
 		self.sentenceImportanceVector = numpy.zeros(shape=(1,self.t))
+		self.sentenceLengthVector = numpy.zeros(shape=(1,self.t))
 
 
 		for x in range(0,self.t):
 			cur_sentence = self.sentences[x]
 			numWords = len(cur_sentence)
+
+			self.sentenceLengthVector[0,x] = numWords
 
 			score = 0
 
@@ -146,8 +149,7 @@ class SummaryGeneration(object):
 				
 				score = score + w
 
-			self.sentenceImportanceVector[0,x] = score
-		
+			self.sentenceImportanceVector[0,x] = score	
 
 			
 		
