@@ -151,6 +151,6 @@ class SummaryGeneration(object):
 
 			self.sentenceImportanceVector[0,x] = score	
 
-		self.sentenceInformation = [[self.sentenceImportanceVector], [self.sentenceLengthVector]]			
+		self.sentenceInformation = [self.sentenceImportanceVector, self.sentenceLengthVector]			
 		
 		
