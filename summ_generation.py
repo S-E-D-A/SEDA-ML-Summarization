@@ -100,9 +100,9 @@ class SummaryGeneration(object):
 			dummy[indices,range(0,self.n)] = -1000
 
 		
-		for x in range(0,10)
+		for x in range(0,10):
 			cur_list = []
-			for y in range(0,self.n)
+			for y in range(0,self.n):
 				item = self.vocabulary[self.indicesMatrix[x,y]]
 				cur_list.append(item)
 
@@ -129,13 +129,13 @@ class SummaryGeneration(object):
 		self.sentenceImportance = numpy.zeros(shape=(1,self.t))
 
 
-		for x in range(0,self.t)
+		for x in range(0,self.t):
 			cur_sentence = self.sentences[x]
 			numWords = len(cur_sentence)
 
 			score = 0
 
-			for i in range(0, numWords)
+			for i in range(0, numWords):
 				cur_word = cur_sentence[i]
 				
 				w = 0
