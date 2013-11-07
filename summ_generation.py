@@ -113,6 +113,7 @@ class SummaryGeneration(object):
 		self.sentences = sentences
 		self.query = query
 		self.t = len(sentences)
+		self.rolloutUN = [item for sublist in self.UN for item in sublist]
 
 		self.sentenceImportance = numpy.zeros(shape=(1,self.t))
 
@@ -127,10 +128,10 @@ class SummaryGeneration(object):
 				cur_word = cur_sentence[i]
 				
 				w = 0
-
-				if (cur_word in self.UN && cur_word in query):
+				
+				if (cur_word in self.rolloutUN && cur_word in query):
 					w = self.lambd
-				elif (cur_word in self.UN):
+				elif (cur_word in self.rolloutUN):
 					w = 1
 				
 				score = score + w
