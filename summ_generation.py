@@ -98,5 +98,21 @@ class SummaryGeneration(object):
 			dummy[indices,range(0,self.n)] = -1000
 
 
+	def sentenceImportance(self, sentences):
+		"""
+		:desc: Sentence Importance Calculation
 
+		:param sentences: list of sentences from document
+			the list is a list of sentences
+			each sentence is a list of words
+		"""
 
+		self.sentences = sentences
+		self.t = len(sentences)
+
+		self.sentenceImportance = numpy.zeros(shape=(1,self.t))
+
+		
+
+		
+		
