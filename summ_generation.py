@@ -24,6 +24,7 @@ import gzip
 import os
 import sys
 import time
+import copy
 
 import numpy
 from numpy import dot
@@ -91,12 +92,14 @@ class SummaryGeneration(object):
 
 		self.indicesMatrix = numpy.zeros(shape=(10, self.n))
 
-		dummy = self.AF
+		dummy = copy.deepcopy(self.AF)
 		for x in range (0, 10):
 			indices = dummy.argmax(axis=0)
 			self.indicesMatrix[x,:] = indices
 			dummy[indices,range(0,self.n)] = -1000
 
+		
+		
 
 
 	def sentenceImportance(self, sentences, query):
