@@ -99,16 +99,19 @@ class SummaryGeneration(object):
 
 
 
-	def sentenceImportance(self, sentences):
+	def sentenceImportance(self, sentences, query):
 		"""
 		:desc: Sentence Importance Calculation
 
 		:param sentences: list of sentences from document
 			the list is a list of sentences
 			each sentence is a list of words
+
+		:param query: list of words from query
 		"""
 
 		self.sentences = sentences
+		self.query = query
 		self.t = len(sentences)
 
 		self.sentenceImportance = numpy.zeros(shape=(1,self.t))
@@ -122,7 +125,19 @@ class SummaryGeneration(object):
 
 			for i in range(0, numWords)
 				cur_word = cur_sentence[i]
-				if 
+				
+				w = 0
 
+				if (cur_word in self.UN && cur_word in query):
+					w = self.lambd
+				elif (cur_word in self.UN):
+					w = 1
+				
+				score = score + w
+
+			self.sentenceImportance[1,x] = score
+		
+
+			
 		
 		
