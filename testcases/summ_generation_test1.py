@@ -55,6 +55,5 @@ print c.indicesMatrix
 print c.UN
 
 c.sentenceImportance(sentences, query)
-print c.sentenceImportanceVector
-
+print c.sentenceInformation
 
