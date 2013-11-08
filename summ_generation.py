@@ -192,7 +192,25 @@ class SummaryGeneration(object):
 		"""
 
 
+		if (lambd_in > N_s):
+			cur_summ.pop()
+			score.pop()
 
+			if (cur_summ not in solutions):
+				solutions.append(cur_summ)
+				scores.append(sum(score))
+			return
+		
+		for x in range(0, len(remaining_sentences))
+			lambd_new = lambd_in + remaining_sentences[1][0][x]
+			score_new = score.append(remaining_sentences[0][0][x])
+			cur_summ.append(x)
+			a = numpy.delete(remaining_sentences[0][0][x])
+			b = numpy.delete(remaining_sentences[1][0][x])
+			rs_new = [a,b]
+			findSummary(lambd_new, score_new, cur_summ, rs_new, solutions, scores, N_s)
+
+		return
 
 
 
