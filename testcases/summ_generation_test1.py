@@ -38,7 +38,7 @@ from summ_generation import SummaryGeneration
 
 
 vocabulary = ['cat', 'dog', 'mouse', 'fox', 'bear', 'tiger', 'ram', 'person', 'gen', 'f', 'd', 's', 'a', 'r', 'y']
-sentences = [['the','cat','jumped','over','the','moon'],['the','dog','fox','f','r']]
+sentences = [['the','cat','jumped','over','the','moon'],['the','dog','fox','f','r'], ['gen', 'd', 's', 'mouse', 'something']]
 query= ['dog', 'f', 'r']
 fD = numpy.random.rand(1,15)
 A_one = numpy.random.rand(15,15)
@@ -46,14 +46,24 @@ A_two = numpy.random.rand(15,15)
 A_three = numpy.random.rand(15,15)
 
 
-c = SummaryGeneration(vocabulary, 15, 3, 200)
+c = SummaryGeneration(vocabulary, 15, 3, 16)
 c.buildAFMatrix(fD, A_one, A_two, A_three)
+print 'AF MATRIX'
 print c.AF
 
 c.wordExtraction()
-print c.indicesMatrix
-print c.UN
+#print c.indicesMatrix
+#print c.UN
 
 c.sentenceImportance(sentences, query)
+print 'SENTENCE INFORMATION'
 print c.sentenceInformation
 
+c.optimizeSummary()
+print 'POTENTIAL SUMMARIES'
+print c.potential_summaries_indices
+print c.potential_summaries_scores
+print 'BEST SUMMARY'
+print c.best_summary_indices
+print c.best_summary_score
+print c.best_summary

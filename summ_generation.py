@@ -127,6 +127,7 @@ class SummaryGeneration(object):
 
 		self.sentenceImportanceVector = numpy.zeros(shape=(1,self.t))
 		self.sentenceLengthVector = numpy.zeros(shape=(1,self.t))
+		self.sentenceIndexVector = numpy.zeros(shape=(1,self.t))
 
 
 		for x in range(0,self.t):
@@ -150,8 +151,9 @@ class SummaryGeneration(object):
 				score = score + w
 
 			self.sentenceImportanceVector[0,x] = score	
+			self.sentenceIndexVector[0,x] = x
 
-		self.sentenceInformation = [self.sentenceImportanceVector, self.sentenceLengthVector]			
+		self.sentenceInformation = [self.sentenceIndexVector, self.sentenceImportanceVector, self.sentenceLengthVector]			
 		
 
 
@@ -161,17 +163,34 @@ class SummaryGeneration(object):
 		"""
 		
 		lambd_in = 0
-		score = []
+		score = 0
 		cur_summ = []
 		remaining_sentences = copy.deepcopy(self.sentenceInformation)
 		scores = [] #2D list containing vectors of scores of summary lists
 		solutions = [] #2D list containing vectors of indices of sentences in summary
 
 
-		findSummary(lambd_in, score, cur_summ, remaining_sentences, solutions, scores, self.N_s)
+		self.findSummary(lambd_in, score, cur_summ, remaining_sentences, solutions, scores, self.N_s)
 
 
-	def findSummary(lambd_in, score, cur_summ, remaining_sentences, solutions, scores, N_s):
+		self.potential_summaries_indices = copy.deepcopy(solutions)
+		self.potential_summaries_scores = copy.deepcopy(scores)
+
+		index = numpy.argmax(self.potential_summaries_scores)
+
+		self.best_summary_indices = self.potential_summaries_indices[index]
+		self.best_summary_score = self.potential_summaries_scores[index]
+		
+		self.best_summary = []
+
+		for x in range(0,len(self.best_summary_indices)):
+			cur_index = self.best_summary_indices[x]
+			self.best_summary.append(self.sentences[cur_index.astype(int)])
+
+
+
+
+	def findSummary(self, lambd_in, score, cur_summ, remaining_sentences, solutions, scores, N_s):
 		"""
 		:desc: recursive function for solving the optimization problem
 			returns the collection of summary possibilities in solutions list
@@ -190,26 +209,41 @@ class SummaryGeneration(object):
 
 		:param N_s: max number of words in a summary
 		"""
-
+	
 
 		if (lambd_in > N_s):
-			cur_summ.pop()
-			score.pop()
+			return	
 
+		if (len(remaining_sentences[0][0]) == 0):
+			solutions.append(cur_summ)
+			scores.append(score)
+
+		for x in range(0, len(remaining_sentences[0][0])):
+
+			if (remaining_sentences[0][0][x] not in cur_summ):
+				lambd_new = copy.deepcopy(lambd_in) + remaining_sentences[2][0][x]
+				score_new = copy.deepcopy(score) + remaining_sentences[1][0][x]
+				cur_summ_new = copy.deepcopy(cur_summ)
+				cur_summ_new.append(remaining_sentences[0][0][x])
+				a = numpy.delete(remaining_sentences[0][0], x)
+				b = numpy.delete(remaining_sentences[1][0], x)
+				c = numpy.delete(remaining_sentences[2][0], x)
+				rs_new = [[a],[b],[c]]
+				self.findSummary(lambd_new, score_new, cur_summ_new, rs_new, solutions, scores, N_s)
+			else:
+				lambd_new = copy.deepcopy(lambd_in)
+				score_new = copy.deepcopy(score)
+				a = numpy.delete(remaining_sentences[0][0], x)
+				b = numpy.delete(remaining_sentences[1][0], x)
+				c = numpy.delete(remaining_sentences[2][0], x)
+				rs_new = [[a], [b], [c]]
+				cur_summ_new = copy.deepcopy(cur_summ)
+				self.findSummary(lambd_new, score_new, cur_summ_new, rs_new, solutions, scores, N_s)
+
+		if (lambd_in <= N_s):
 			if (cur_summ not in solutions):
 				solutions.append(cur_summ)
-				scores.append(sum(score))
-			return
-		
-		for x in range(0, len(remaining_sentences))
-			lambd_new = lambd_in + remaining_sentences[1][0][x]
-			score_new = score.append(remaining_sentences[0][0][x])
-			cur_summ.append(x)
-			a = numpy.delete(remaining_sentences[0][0][x])
-			b = numpy.delete(remaining_sentences[1][0][x])
-			rs_new = [a,b]
-			findSummary(lambd_new, score_new, cur_summ, rs_new, solutions, scores, N_s)
-
+				scores.append(score)
 		return
 
 
