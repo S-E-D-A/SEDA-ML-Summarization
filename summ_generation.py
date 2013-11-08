@@ -153,4 +153,22 @@ class SummaryGeneration(object):
 
 		self.sentenceInformation = [[self.sentenceImportanceVector], [self.sentenceLengthVector]]			
 		
+
+
+	def optimizeSummary(self):
+		"""
+		:desc: Summary Optimization using Dynamic Programming
+		"""
 		
+		lambd_in = 0
+		score = []
+		cur_summ = []
+		remaining_sentences = copy.deepcopy(self.sentenceInformation)
+		scores = [] #2D list containing vectors of scores of summary lists
+		solutions = [] #2D list containing vectors of indices of sentences in summary
+
+
+		findSummary(lambd_in, score, cur_summ, remaining_sentences, solutions, scores, self.N_s)
+
+
+
