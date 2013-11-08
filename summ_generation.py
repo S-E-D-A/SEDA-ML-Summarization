@@ -171,4 +171,31 @@ class SummaryGeneration(object):
 		findSummary(lambd_in, score, cur_summ, remaining_sentences, solutions, scores, self.N_s)
 
 
+	def findSummary(lambd_in, score, cur_summ, remaining_sentences, solutions, scores, N_s):
+		"""
+		:desc: recursive function for solving the optimization problem
+			returns the collection of summary possibilities in solutions list
+
+		:param lambd_in: current number of words
+
+		:param score: current score list corresponding to current summary
+
+		:param cur_summ: current summary list of indices of sentences
+
+		:param remaining_sentences: sentences list that could be added to current summary
+
+		:param solutions: solutions list containing all possible summaries
+
+		:param scores: scores list corresponding to solutions list
+
+		:param N_s: max number of words in a summary
+		"""
+
+
+
+
+
+
+
+
 
