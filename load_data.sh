@@ -26,7 +26,7 @@ done
 # configure path to xml files
 # NOTE: DUC PATH NOT CONFIGURED
 if [ "$dataset_name" == "Australia" ]; then
-    data_path="./corpus/fulltext/"
+    data_path="./corpus/fulltext/*.xml"
 else
     echo "DUC set is unavailable at the moment!"
     break
@@ -34,4 +34,4 @@ fi
 
 # INDEXING:
 # PUT data from path onto SOLR
-http://localhost:18888/solr/
+java -Durl=http://localhost:18983/solr/update -jar post.jar "$data_path"
