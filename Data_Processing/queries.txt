@@ -1,0 +1,21 @@
+QUERIES.TXT
+This document details a few important queries from the SOLR database for this project.  Please read the documentation associated with each query to truly understand what is happening, and how you can customize the query to extract what you need from SOLR.
+
+
+INFORMATION DUMP:
+Query:
+http://localhost:18983/solr/collection1/select?q=*%3A*&wt=python&indent=true&facet=true&facet.field=features&facet.limit=-1
+
+TEXT:
+Query:
+http://localhost:18983/solr/collection1/select?q=*%3A*&wt=python&indent=true
+
+TERM FREQUENCIES:
+Query:
+http://localhost:18983/solr/collection1/terms?wt=python&indent=true&terms.fl=features&terms.limit=-1
+
+Source:
+http://wiki.apache.org/solr/TermsComponent
+
+
+
