@@ -1,0 +1,18 @@
+README
+
+To send files to SOLR:
+1) Make sure directories are formatted properly such that load_data.sh can find the data you wish to submit
+
+2) Run sh load_data.sh
+
+To create labels for datasets:
+1) Make sure directories are formatted properly such that load_data.sh can find the data you wish to submit
+
+2) Run sh create_labels.sh
+
+
+
+
+
+
+
