@@ -2,7 +2,14 @@ QUERIES.TXT
 This document details a few important queries from the SOLR database for this project.  Please read the documentation associated with each query to truly understand what is happening, and how you can customize the query to extract what you need from SOLR.
 
 
-INFORMATION DUMP:
+INFORMATION DUMP BY DOCUMENT:
+Query:
+http://localhost:18983/solr/collection1/tvrh?q=*%3A*&wt=python&indent=true&tv.fl=features&tv.all=true
+
+This will return the text, and term vectors BY DOCUMENT (tf = frequency in document, df = frequency in document, tf-idf)
+
+
+INFORMATION DUMP BY WORD:
 Query:
 http://localhost:18983/solr/collection1/select?q=*%3A*&wt=python&indent=true&facet=true&facet.field=features&facet.limit=-1
 
