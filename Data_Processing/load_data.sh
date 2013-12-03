@@ -18,8 +18,8 @@ read dataset_name
 
 # test input
 flag=true
-while [ $flag ]; do
-    if [ "$dataset_name" != "Australia" ] && [ "$dataset_name" != "DUC" ]; then
+while [ ${flag} ]; do
+    if [ ${dataset_name} != "Australia" ] && [ ${dataset_name} != "DUC" ]; then
         echo "Please enter either Australia or DUC"
         read dataset_name
     else
@@ -29,12 +29,12 @@ done
 
 # configure path to json files
 # NOTE: DUC PATH NOT CONFIGURED
-if [ "$dataset_name" == "Australia" ]; then
-    data_path="corpus/fulltext/*"
+if [ ${dataset_name} = "Australia" ]; then
+    data_path="./corpus/fulltext/*"
 
 else
     echo "DUC set is unavailable at the moment!"
-    break
+    exit
 fi
 
 # INDEXING:
@@ -44,15 +44,16 @@ if [ -d "solr_files" ]; then
 else
     mkdir "solr_files"
     echo "Converting files into a format compatible with SOLR"
-    for f in $data_path
+    for f in ${data_path}
     do
         filename=$(basename $f)
-    if [ "$dataset_name" == "Australia" ]; then
-        python australia_xml_parser.py "$f" "solr_files/$filename"
+    if [ "${dataset_name}" = "Australia" ]; then
+        python australia_xml_parser.py "${f}" "solr_files/${filename}"
     fi
     done
 fi
 # PUT data from path onto SOLR
 echo "Posting files to SOLR"
-curl "http://localhost:8983/solr/admin/cores?action=CREATE&name=AustralianDataset&instanceDir=/home/vagrant/source/SEDA-ML-Summarization/Data_Processing/solr_config/collection1"
+cp -a "/home/vagrant/source/SEDA-ML-Summarization/Data_Processing/solr_config" "/home/vagrant"
+curl "http://localhost:8983/solr/admin/cores?action=CREATE&name=AustralianDataset&instanceDir=/home/vagrant/solr_config/collection1"
 java -Durl=http://localhost:8983/solr/AustralianDataset/update -jar post.jar "solr_files/*.xml"
