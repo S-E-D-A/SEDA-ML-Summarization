@@ -6,8 +6,6 @@
 #  Created by Hobey Kuhn on 11/18/13.
 #
 
-
-
 # Enforce JSON format
 echo "Before continuing, make sure your files in xml format! Also make sure that there is no directory called solr_files if you are planning on converting files first"
 
@@ -30,6 +28,8 @@ done
 # configure path to json files
 # NOTE: DUC PATH NOT CONFIGURED
 if [ ${dataset_name} = "Australia" ]; then
+    # Obtains and unzips the Australian dataset if not alraedy present
+    sh getAustralianDataset.sh
     data_path="./corpus/fulltext/*"
 
 else
@@ -54,6 +54,6 @@ else
 fi
 # PUT data from path onto SOLR
 echo "Posting files to SOLR"
-cp -a "/home/vagrant/source/SEDA-ML-Summarization/Data_Processing/solr_config" "/home/vagrant"
+cp -a "solr_config" "/home/vagrant"
 curl "http://localhost:8983/solr/admin/cores?action=CREATE&name=AustralianDataset&instanceDir=/home/vagrant/solr_config/collection1"
 java -Durl=http://localhost:8983/solr/AustralianDataset/update -jar post.jar "solr_files/*.xml"
