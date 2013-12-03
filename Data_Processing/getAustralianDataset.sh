@@ -15,10 +15,8 @@ if [ ! -d ${DATASET_DIRECTORY} ]; then
   # Unzip
   unzip ${DATASET_ZIP_FILE}
   mv ${DATASET_ZIP_FILE} "../data"
-  mv -r "corpus" "../data"
+  mv  "corpus" "../data"
   # Remove the compressed file
-  rm ${DATASET_ZIP_FILE}
-  rm -r "__MACOSX"
 
   echo "Downloaded and unzipped corpus.zip"
 else
