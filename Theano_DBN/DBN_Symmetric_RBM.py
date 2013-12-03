@@ -420,6 +420,10 @@ def test_DBN(finetune_lr=0.1, pretraining_epochs=100,
                 done_looping = True
                 break
 
+    A1_filename = 'A1_matrix'
+    A2_filename = 'A2_matrix'
+    A3_filename = 'A3_matrix'
+
     end_time = time.clock()
     print(('Optimization complete with best validation score of %f %%,'
            'with test performance %f %%') %
@@ -428,6 +432,13 @@ def test_DBN(finetune_lr=0.1, pretraining_epochs=100,
                           os.path.split(__file__)[1] +
                           ' ran for %.2fm' % ((end_time - start_time)
                                               / 60.))
+
+    print "...Saving A1 matrix to: ", A1_filename, ".npy"
+    numpy.save(A1_filename, dbn.rbm_layers[0].W.container.storage[0])
+    print "...Saving A2 matrix to: ", A2_filename, ".npy"
+    numpy.save(A2_filename, dbn.rbm_layers[1].W.container.storage[0])
+    print "...Saving A3 matrix to: ", A3_filename, ".npy"
+    numpy.save(A3_filename, dbn.rbm_layers[2].w.container.storage[0])
 
 
 if __name__ == '__main__':
