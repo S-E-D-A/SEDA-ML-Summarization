@@ -6,7 +6,7 @@
 
 DATASET_ZIP_FILE="corpus.zip"
 DATASET_URL="http://archive.ics.uci.edu/ml/machine-learning-databases/00239/${DATASET_ZIP_FILE}"
-DATASET_DIRECTORY="corpus"
+DATASET_DIRECTORY="../data/corpus"
 
 # Download and unzip only if it's not present
 if [ ! -d ${DATASET_DIRECTORY} ]; then
@@ -14,8 +14,11 @@ if [ ! -d ${DATASET_DIRECTORY} ]; then
   curl -O ${DATASET_URL}
   # Unzip
   unzip ${DATASET_ZIP_FILE}
+  mv ${DATASET_ZIP_FILE} "../data"
+  mv -r "corpus" "../data"
   # Remove the compressed file
   rm ${DATASET_ZIP_FILE}
+  rm -r "__MACOSX"
 
   echo "Downloaded and unzipped corpus.zip"
 else
