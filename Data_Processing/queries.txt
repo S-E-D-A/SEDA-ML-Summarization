@@ -1,0 +1,49 @@
+QUERIES.TXT
+This document details a few important queries from the SOLR database for this project.  Please read the documentation associated with each query to truly understand what is happening, and how you can customize the query to extract what you need from SOLR.
+
+
+INFORMATION DUMP BY DOCUMENT:
+Query: (10 docs)
+http://localhost:18983/solr/collection1/tvrh?q=*%3A*&wt=python&indent=true&tv.fl=features&tv.all=true
+
+Query: (all docs - LARGE FILE GIGABYTES)
+http://localhost:18983/solr/collection1/tvrh?q=*%3A*&wt=python&indent=true&tv.fl=features&tv.all=true&rows=3980
+
+Query: (300 docs batches)
+http://localhost:18983/solr/collection1/tvrh?q=*%3A*&wt=python&indent=true&tv.fl=features&tv.all=true&rows=300
+http://localhost:18983/solr/collection1/tvrh?q=*%3A*&wt=python&indent=true&tv.fl=features&tv.all=true&start=300&rows=300
+http://localhost:18983/solr/collection1/tvrh?q=*%3A*&wt=python&indent=true&tv.fl=features&tv.all=true&start=600&rows=300
+http://localhost:18983/solr/collection1/tvrh?q=*%3A*&wt=python&indent=true&tv.fl=features&tv.all=true&start=900&rows=300
+http://localhost:18983/solr/collection1/tvrh?q=*%3A*&wt=python&indent=true&tv.fl=features&tv.all=true&start=1200&rows=300
+http://localhost:18983/solr/collection1/tvrh?q=*%3A*&wt=python&indent=true&tv.fl=features&tv.all=true&start=1500&rows=300
+http://localhost:18983/solr/collection1/tvrh?q=*%3A*&wt=python&indent=true&tv.fl=features&tv.all=true&start=1800&rows=300
+http://localhost:18983/solr/collection1/tvrh?q=*%3A*&wt=python&indent=true&tv.fl=features&tv.all=true&start=2100&rows=300
+http://localhost:18983/solr/collection1/tvrh?q=*%3A*&wt=python&indent=true&tv.fl=features&tv.all=true&start=2400&rows=300
+http://localhost:18983/solr/collection1/tvrh?q=*%3A*&wt=python&indent=true&tv.fl=features&tv.all=true&start=2700&rows=300
+http://localhost:18983/solr/collection1/tvrh?q=*%3A*&wt=python&indent=true&tv.fl=features&tv.all=true&start=3000&rows=300
+http://localhost:18983/solr/collection1/tvrh?q=*%3A*&wt=python&indent=true&tv.fl=features&tv.all=true&start=3300&rows=300
+http://localhost:18983/solr/collection1/tvrh?q=*%3A*&wt=python&indent=true&tv.fl=features&tv.all=true&start=3600&rows=300
+
+
+
+
+This will return the text, and term vectors BY DOCUMENT (tf = frequency in document, df = frequency in document, tf-idf)
+
+
+INFORMATION DUMP BY WORD:
+Query:
+http://localhost:18983/solr/collection1/select?q=*%3A*&wt=python&indent=true&facet=true&facet.field=features&facet.limit=-1
+
+TEXT:
+Query:
+http://localhost:18983/solr/collection1/select?q=*%3A*&wt=python&indent=true
+
+TERM FREQUENCIES:
+Query:
+http://localhost:18983/solr/collection1/terms?wt=python&indent=true&terms.fl=features&terms.limit=-1
+
+Source:
+http://wiki.apache.org/solr/TermsComponent
+
+
+
