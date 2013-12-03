@@ -33,16 +33,21 @@ if [ -d "$SOLR_XML_DIR" ]; then
 else
     mkdir "$SOLR_XML_DIR"
     echo "Converting files into a format compatible with SOLR"
-    for f in "${data_path}"
+    for f in ${data_path}
     do
-        filename="$(basename $f)"
+        filename=`basename "${f}"`
     if [ "${1}" = "Australia" ]; then
-        python australia_xml_parser.py "${f}" ""${SOLR_XML_DIR}"/"${filename}""
+        python australia_xml_parser.py "${f}" "${SOLR_XML_DIR}/${filename}"
     fi
     done
 fi
+
 # PUT data from path onto SOLR
 echo "Posting files to SOLR"
+
+#moving core configuration to hard dir
 cp -a "solr_config" "/home/vagrant"
-curl "http://localhost:8983/solr/admin/cores?action=CREATE&name="${2}"&instanceDir=/home/vagrant/solr_config/collection1"
-java -Durl=http://localhost:8983/solr/"${2}"/update -jar post.jar ""{$SOLR_XML_DIR}"/*.xml"
+
+curl "http://localhost:8983/solr/admin/cores?action=CREATE&name=AustralianDataset&instanceDir=/home/vagrant/solr_config/collection1"
+
+java -Durl=http://localhost:8983/solr/AustralianDataset/update -jar post.jar "${SOLR_XML_DIR}/*.xml"
