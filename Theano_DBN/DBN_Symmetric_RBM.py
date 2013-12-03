@@ -308,8 +308,13 @@ def test_DBN(finetune_lr=0.1, pretraining_epochs=100,
     numpy_rng = numpy.random.RandomState(123)
     print '... building the model'
     # construct the Deep Belief Network
-    dbn = DBN(numpy_rng=numpy_rng, n_ins=28 * 28,
-              hidden_layers_sizes=[1000, 1000, 1000],
+
+    #Number of inputs
+    vocab_size = 28*28
+    #Number of hidden units in each layer
+    layer_architecture = [1000, 250, 10, 250, 1000, vocab_size]
+    dbn = DBN(numpy_rng=numpy_rng, n_ins=vocab_size,
+              hidden_layers_sizes=layer_architecture,
               n_outs=10)
 
     #########################
@@ -373,7 +378,8 @@ def test_DBN(finetune_lr=0.1, pretraining_epochs=100,
     while (epoch < training_epochs) and (not done_looping):
         epoch = epoch + 1
         for minibatch_index in xrange(n_train_batches):
-
+	    #Make weights symmetric again on each iteration
+	    dbn.make_weights_symmetric()
             minibatch_avg_cost = train_fn(minibatch_index)
             iter = (epoch - 1) * n_train_batches + minibatch_index
 
