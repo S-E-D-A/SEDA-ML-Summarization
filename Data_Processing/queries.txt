@@ -25,6 +25,13 @@ http://localhost:18983/solr/collection1/tvrh?q=*%3A*&wt=python&indent=true&tv.fl
 http://localhost:18983/solr/collection1/tvrh?q=*%3A*&wt=python&indent=true&tv.fl=features&tv.all=true&start=3600&rows=300
 
 
+Query (term component vectors without text):
+http://localhost:18983/solr/collection1/tvrh?q=*%3A*&wt=python&indent=true&tv.fl=features&tv.all=true&fl=false&start=0&rows=300
+...
+...
+http://localhost:18983/solr/collection1/tvrh?q=*%3A*&wt=python&indent=true&tv.fl=features&tv.all=true&fl=false&start=3600&rows=300
+
+
 
 
 This will return the text, and term vectors BY DOCUMENT (tf = frequency in document, df = frequency in document, tf-idf)
