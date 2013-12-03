@@ -2,6 +2,8 @@ import theano
 import numpy
 import random
 
+from clean_doc import *
+
 #Converts the list passed into it into dictionary format,
 #in the form specified below, to be used to extract
 #features cleanly
@@ -11,6 +13,8 @@ def to_dict(l):
     rv = zip(*[iter(l)]*2)
     for k, v in rv:
         return {k: to_dict(v)}
+	
+
 
 #Returns a dictionary version of the feature table, and a key-table
 #containing the name of each document of the corresponding index in the 
@@ -24,7 +28,11 @@ def to_dict(l):
 # = the corresponding word's tf-idf value
 def to_full_feature_list(doc_name, ndocs):
 	
-	feature_list = eval('[{0}]'.format(open(doc_name).read()))
+	
+	doc_string = open(doc_name).read()
+	doc_string = clean_doc(doc_string)
+	
+	feature_list = eval('[{0}]'.format(doc_string))
 	dwf = []
 	dt = {}
 
@@ -89,14 +97,14 @@ def construct_dataset(doc_name, ndocs):
 	
 
 #Splits the training data
-def split_data(data_set):
+def split_data(data_set, ndocs):
 	
-	train_set = data_set[40:]
-	valid_set = data_set[0:20]
-	test_set = data_set[20:40]
-        #train_set = data_set[0:5]
-        #valid_set = data_set[5:8]
-        #test_set = data_set[8:10]
+	#train_set = data_set[40:]
+	#valid_set = data_set[0:20]
+	#test_set = data_set[20:40]
+        train_set = data_set[0:ndocs/2]
+        valid_set = data_set[ndocs/2:ndocs/2 + ndocs/4]
+        test_set = data_set[ndocs/2 + ndocs/4:]
 	return train_set, valid_set, test_set
 
 #Makes the data shared to work with theano DBN.py
@@ -106,8 +114,8 @@ def make_shared_data(data_subset, borrow = True):
 				borrow = borrow)
 
 def load_data_australia(doc_name, ndocs):
-	trs, vs, tes = split_data(construct_dataset(doc_name, ndocs))
-    
+	trs, vs, tes = split_data(construct_dataset(doc_name, ndocs), ndocs)
+    	nfeats = len(trs[0])
        
 	tr_x = make_shared_data(trs)
 	val_x = make_shared_data(vs)
@@ -126,4 +134,4 @@ def load_data_australia(doc_name, ndocs):
         print 'Validation set size: ', len(vs)
         print 'Test set size: ', len(tes) 		
 	rval = [(tr_x, tr_y),(val_x, val_y),(tes_x, tes_y)]
-	return rval
+	return nfeats, rval
