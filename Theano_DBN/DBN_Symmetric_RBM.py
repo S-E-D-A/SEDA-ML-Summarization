@@ -126,11 +126,20 @@ class DBN(object):
             input=self.sigmoid_layers[-1].output,
             n_in=hidden_layers_sizes[-1],
             n_out=n_outs)
-        self.params.extend(self.logLayer.params)
+	#Because logistic layer isn't used in gradient computation,
+	#we remove these symbolic parameters from the RBM
+        #self.params.extend(self.logLayer.params)
+	
+	#Reconstructed output of RBM
+	x_recons = self.sigmoid_layers[-1].output
 
+	#Uses binary cross entropy to compute cost between input and reconstruction
+	self.finetune_cost = theano.tensor.nnet.binary_crossentropy(x_recons,self.x).mean()
+	###ORIGINAL THEANO CODE###
         # compute the cost for second phase of training, defined as the
         # negative log likelihood of the logistic regression (output) layer
-        self.finetune_cost = self.logLayer.negative_log_likelihood(self.y)
+        #self.finetune_cost = self.logLayer.negative_log_likelihood(self.y)
+	###
 
         # compute the gradients with respect to the model parameters
         # symbolic variable that points to the number of errors made on the
