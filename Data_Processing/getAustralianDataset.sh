@@ -1,26 +1,26 @@
 #!/bin/bash
 
 ##
-## This script downloads and unzips the Australian Legal Dataset if it is not already present
+## This script downloads and unzips the Australian Legal Dataset into ../data if it is not already present.
 ##
 
 DATASET_ZIP_FILE="corpus.zip"
-DATASET_URL="http://archive.ics.uci.edu/ml/machine-learning-databases/00239/${DATASET_ZIP_FILE}"
-DATASET_DIRECTORY="../data/corpus"
+DATASET_URL="https://www.dropbox.com/s/qspwwkktycacyyj/${DATASET_ZIP_FILE}"
+DATASET_DIRECTORY="../data"
+CORPUS_DIRECTORY="${DATASET_DIRECTORY}/corpus"
 
 # Download and unzip only if it's not present
-if [ ! -d ${DATASET_DIRECTORY} ]; then
-  # Download
-  curl -O ${DATASET_URL}
-  # Unzip
-  unzip ${DATASET_ZIP_FILE}
-  mv ${DATASET_ZIP_FILE} "../data"
-  mv -r "corpus" "../data"
-  # Remove the compressed file
-  rm ${DATASET_ZIP_FILE}
-  rm -r "__MACOSX"
+if [ ! -d "${CORPUS_DIRECTORY}" ]; then
+  # Download corpus.zip into data directory
+  wget "${DATASET_URL}" -O "${DATASET_DIRECTORY}/${DATASET_ZIP_FILE}"
 
-  echo "Downloaded and unzipped corpus.zip"
+  # Unzip corpus.zip in data folder
+  unzip "${DATASET_DIRECTORY}/${DATASET_ZIP_FILE}" -d "${DATASET_DIRECTORY}"
+  
+  # Remove the compressed file
+  rm "${DATASET_DIRECTORY}/${DATASET_ZIP_FILE}"
+
+  echo "Downloaded and unzipped ${DATASET_ZIP_FILE} in ${CORPUS_DIRECTORY}"
 else
   # Nothing needs to be done if /.solrinstalled is present
   echo "Corpus already unzipped."
