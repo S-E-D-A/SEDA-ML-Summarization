@@ -9,7 +9,7 @@ DATASET_URL="http://archive.ics.uci.edu/ml/machine-learning-databases/00239/${DA
 DATASET_DIRECTORY="corpus"
 
 # Download and unzip only if it's not present
-if [ ! -d corpus ]; then
+if [ ! -d ${DATASET_DIRECTORY} ]; then
   # Download
   curl -O ${DATASET_URL}
   # Unzip
