@@ -54,4 +54,5 @@ else
 fi
 # PUT data from path onto SOLR
 echo "Posting files to SOLR"
-java -Durl=http://localhost:18983/solr/update -jar post.jar "solr_files/*.xml"
+curl "http://localhost:8983/solr/admin/cores?action=CREATE&name=AustralianDataset&instanceDir=/home/vagrant/source/SEDA-ML-Summarization/Data_Processing/solr_config/collection1"
+java -Durl=http://localhost:8983/solr/AustralianDataset/update -jar post.jar "solr_files/*.xml"
