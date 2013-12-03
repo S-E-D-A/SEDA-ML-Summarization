@@ -16,6 +16,7 @@ from logistic_sgd import LogisticRegression, load_data
 from mlp import HiddenLayer
 from rbm import RBM
 
+from features_to_dict import *
 
 class DBN(object):
     """Deep Belief Network
@@ -146,9 +147,11 @@ class DBN(object):
         # minibatch given by self.x and self.y
         self.errors = self.logLayer.errors(self.y)
 
-   #Makes the last n_layers/2 weight matrices in a symmetric RBM
-   #equal to the transpose of the first n_layers/2 weight matrices
-   def make_weights_symmetric(self):
+
+    #Makes the last n_layers/2 weight matrices in a symmetric RBM
+    #equal to the transpose of the first n_layers/2 weight matrices
+
+    def make_weights_symmetric(self):
 	print "...Making weights symmetric"
 	for ind in xrange((self.n_layers)/2):
 	    self.rbm_layers[self.n_layers - ind - 1].W.container.storage[0] = numpy.transpose(self.rbm_layers[ind].W.container.storage[0])
@@ -295,7 +298,8 @@ def test_DBN(finetune_lr=0.1, pretraining_epochs=100,
     :param batch_size: the size of a minibatch
     """
 
-    datasets = load_data(dataset)
+    #datasets = load_data(dataset)
+    datasets = load_data_australia('australia_batch_1', 300)
 
     train_set_x, train_set_y = datasets[0]
     valid_set_x, valid_set_y = datasets[1]
@@ -310,7 +314,8 @@ def test_DBN(finetune_lr=0.1, pretraining_epochs=100,
     # construct the Deep Belief Network
 
     #Number of inputs
-    vocab_size = 28*28
+    #vocab_size = 28*28
+    vocab_size = 29689
     #Number of hidden units in each layer
     layer_architecture = [1000, 250, 10, 250, 1000, vocab_size]
     dbn = DBN(numpy_rng=numpy_rng, n_ins=vocab_size,
