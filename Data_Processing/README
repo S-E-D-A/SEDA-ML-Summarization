@@ -5,8 +5,8 @@ Australian Legal Case Dataset:
 1) Run: sh getAustralianDataset.sh
 	Downloads australian legal case dataset into current directory
 
-2) Run: sh load_data.sh Australia AustralianDataset
-	sh load_data.sh (dataset name) (new solr core name)
+2) Run: sh load_data.sh Australia
+	sh load_data.sh (dataset name)
 	Parses dataset into solr-compatible xml format, then posts to specified core name
 
 
