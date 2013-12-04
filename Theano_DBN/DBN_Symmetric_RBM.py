@@ -145,7 +145,7 @@ class DBN(object):
         # compute the gradients with respect to the model parameters
         # symbolic variable that points to the number of errors made on the
         # minibatch given by self.x and self.y
-        self.errors = self.logLayer.errors(self.y)
+        self.errors = self.finetune_cost
 
 
     #Makes the last n_layers/2 weight matrices in a symmetric RBM
@@ -274,8 +274,8 @@ class DBN(object):
         return train_fn, valid_score, test_score
 
 
-def test_DBN(finetune_lr=0.1, pretraining_epochs=100,
-             pretrain_lr=0.01, k=1, training_epochs=1000,
+def test_DBN(finetune_lr=0.1, pretraining_epochs=10,
+             pretrain_lr=0.01, k=1, training_epochs=100,
              dataset='../data/mnist.pkl.gz', batch_size=10):
     """
     Demonstrates how to train and test a Deep Belief Network.
@@ -299,7 +299,7 @@ def test_DBN(finetune_lr=0.1, pretraining_epochs=100,
     """
 
     #datasets = load_data(dataset)
-    vocab_size, datasets = load_data_australia('australia_batch_2-dirty', 300)
+    vocab_size, datasets = load_data_australia('australia_batch_2-dirty', 100)
 
     train_set_x, train_set_y = datasets[0]
     valid_set_x, valid_set_y = datasets[1]
@@ -393,7 +393,7 @@ def test_DBN(finetune_lr=0.1, pretraining_epochs=100,
 
                 validation_losses = validate_model()
                 this_validation_loss = numpy.mean(validation_losses)
-                print('epoch %i, minibatch %i/%i, validation error %f %%' % \
+                print('epoch %i, minibatch %i/%i, finetune cost: %f %%' % \
                       (epoch, minibatch_index + 1, n_train_batches,
                        this_validation_loss * 100.))
 
@@ -439,7 +439,7 @@ def test_DBN(finetune_lr=0.1, pretraining_epochs=100,
     print "...Saving A2 matrix to: ", A2_filename, ".npy"
     numpy.save(A2_filename, dbn.rbm_layers[1].W.container.storage[0])
     print "...Saving A3 matrix to: ", A3_filename, ".npy"
-    numpy.save(A3_filename, dbn.rbm_layers[2].w.container.storage[0])
+    numpy.save(A3_filename, dbn.rbm_layers[2].W.container.storage[0])
 
 
 if __name__ == '__main__':
