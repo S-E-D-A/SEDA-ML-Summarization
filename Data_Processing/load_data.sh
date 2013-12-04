@@ -8,7 +8,7 @@
 
 
 SOLR_XML_DIR="../data/solr_xml_files"
-
+SOLR_CONFIG_DIR="/home/vagrant"
 
 
 
@@ -45,9 +45,22 @@ fi
 # PUT data from path onto SOLR
 echo "Posting files to SOLR"
 
-#moving core configuration to hard dir
-cp -a "solr_config" "/home/vagrant"
+# moving core configuration to hard dir
+cp -a "solr_config" "${SOLR_CONFIG_DIR}"
 
-curl "http://localhost:8983/solr/admin/cores?action=CREATE&name=AustralianDataset&instanceDir=/home/vagrant/solr_config/collection1"
+if [ "${1}" = "Australia" ]; then
+    if [ -e "${SOLR_CONFIG_DIR}/solr_config/collection1/core.properties" ]; then
+        # skip creating new core
+        echo "Core already exists... If you are creating a new core, please clear the old one before posting!"
+	exit
+    else
+        # create new core
+        echo "Building new SOLR core..."
+        curl "http://localhost:8983/solr/admin/cores?action=CREATE&name=AustralianDataset&instanceDir=/home/vagrant/solr_config/collection1"
+    fi
+    # post files to core
+    java -Durl=http://localhost:8983/solr/AustralianDataset/update -jar post.jar "${SOLR_XML_DIR}/*.xml"
+fi
 
-java -Durl=http://localhost:8983/solr/AustralianDataset/update -jar post.jar "${SOLR_XML_DIR}/*.xml"
+
+
