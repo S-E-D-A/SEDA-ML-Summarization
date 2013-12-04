@@ -37,6 +37,7 @@ else
     do
         filename=`basename "${f}"`
     if [ "${1}" = "Australia" ]; then
+        echo "Converting: ${filename}"
         python australia_xml_parser.py "${f}" "${SOLR_XML_DIR}/${filename}"
     fi
     done
@@ -45,19 +46,28 @@ fi
 # PUT data from path onto SOLR
 echo "Posting files to SOLR"
 
-# moving core configuration to hard dir
-cp -a "solr_config" "${SOLR_CONFIG_DIR}"
 
 if [ "${1}" = "Australia" ]; then
     if [ -e "${SOLR_CONFIG_DIR}/solr_config/collection1/core.properties" ]; then
         # skip creating new core
-        echo "Core already exists... If you are creating a new core, please clear the old one before posting!"
-	exit
-    else
-        # create new core
-        echo "Building new SOLR core..."
-        curl "http://localhost:8983/solr/admin/cores?action=CREATE&name=AustralianDataset&instanceDir=/home/vagrant/solr_config/collection1"
+        echo "Core already exists... If you are creating a new core, please clear the old one before posting! Type y to delete, otherwise exit"
+        read input
+        if [ "${input}" = "y" ]; then
+            rm -r -f "${SOLR_CONFIG_DIR}/solr_config"
+            curl "http://localhost:8983/solr/admin/cores?action=UNLOAD&core=AustralianDataset"
+	else
+            echo "Quitting..."
+            exit
+        fi
     fi
+
+    # create new configuration folder
+    cp -a "solr_config" "${SOLR_CONFIG_DIR}"
+
+    # create new core
+    echo "Building new SOLR core..."
+    curl "http://localhost:8983/solr/admin/cores?action=CREATE&name=AustralianDataset&instanceDir=/home/vagrant/solr_config/collection1"
+    
     # post files to core
     java -Durl=http://localhost:8983/solr/AustralianDataset/update -jar post.jar "${SOLR_XML_DIR}/*.xml"
 fi
