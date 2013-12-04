@@ -4,9 +4,12 @@
 ## This script downloads and unzips the Australian Legal Dataset into ../data if it is not already present.
 ##
 
+# Get the directory of this script to use in reference to
+SCRIPT_PATH=$( cd $(dirname $0) ; pwd -P )
+
 DATASET_ZIP_FILE="corpus.zip"
 DATASET_URL="https://www.dropbox.com/s/qspwwkktycacyyj/${DATASET_ZIP_FILE}"
-DATASET_DIRECTORY="../data"
+DATASET_DIRECTORY="${SCRIPT_PATH}/../data"
 CORPUS_DIRECTORY="${DATASET_DIRECTORY}/corpus"
 
 # Download and unzip only if it's not present
