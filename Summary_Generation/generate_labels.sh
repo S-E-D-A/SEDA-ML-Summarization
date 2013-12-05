@@ -32,14 +32,18 @@ fi
 # make directory for labels and parse files for labels
 if [ "${DATASET_NAME}" = "Australia" ]; then
     echo "Retrieving labels from data..."
-    mkdir "${AUSTRALIAN_DATASET_LABELS_DIR}"
-    for f in ${data_path}
-    do
-        filename=`basename "${f}"`
-        if [ "${DATASET_NAME}" = "Australia" ]; then
-            echo "Retrieving Label from: ${filename}"
-            python australia_xml_label_parser.py "${f}" "${AUSTRALIAN_DATASET_LABELS_DIR}/${filename}"
-        fi
-    done
+    if [ -d "${AUSTRALIAN_DATASET_LABELS_DIR}" ]; then
+        echo "The labels directory already exists. Labels are already generated. Skipping generation..."
+    else
+        mkdir "${AUSTRALIAN_DATASET_LABELS_DIR}"
+        for f in ${data_path}
+        do
+            filename=`basename "${f}"`
+            if [ "${DATASET_NAME}" = "Australia" ]; then
+                echo "Retrieving Label from: ${filename}"
+                python australian_xml_label_parser.py "${f}" "${AUSTRALIAN_DATASET_LABELS_DIR}/${filename}"
+            fi
+        done
+    fi
 fi
 
