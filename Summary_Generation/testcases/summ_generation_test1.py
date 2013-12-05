@@ -34,7 +34,7 @@ from numpy import dot
 
 sys.path.append('/Users/hobeykuhn/Documents/Schoolwork/University of Michigan/MSAIL/SEDA-ML-Summarization');
 
-from summ_generation import SummaryGeneration
+from summary_generation_class import SummaryGeneration
 
 
 vocabulary = ['cat', 'dog', 'mouse', 'fox', 'bear', 'tiger', 'ram', 'person', 'gen', 'f', 'd', 's', 'a', 'r', 'y']
