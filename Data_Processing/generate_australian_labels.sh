@@ -8,7 +8,7 @@
 
 
 
-DATASET_NAME=${1}
+DATASET_NAME="${1}"
 AUSTRALIAN_DATASET_DIR="../data/corpus/"
 AUSTRALIAN_DATASET_LABELS_DIR="../data/australian_dataset_labels"
 
