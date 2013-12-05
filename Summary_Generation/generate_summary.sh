@@ -9,21 +9,16 @@
 
 DATASET_NAME="${1}"
 DATA_DIR="../data"
-DATA_PROCESSING_DIR="../Data_Processing"
 AUSTRALIAN_DATASET_DIR="${DATA_DIR}/corpus/"
 AUSTRALIAN_DATASET_LABELS_DIR="${DATA_DIR}/australian_dataset_labels"
 
 
 # confirm dataset name and retrieve labels
-if [ "${DATASET_NAME}" = "Australia" ]; then
-    echo "Retrieving labels.."
-    sh "${DATA_PROCESSING_DIR}/generate_australian_labels.sh" Australia
+echo "Retrieving labels.."
+sh generate_labels.sh "${DATASET_NAME}"
 
-else
-    echo "Invalid input in command line. Please read the README to learn how to use this script!"
-    exit
-fi
 
+# parse labels into numpy lists (sentences of words)
 
 
 
