@@ -52,7 +52,7 @@ if [ -f "vocabulary_pickled" ]; then
 else
     echo "Retrieving dictionary from SOLR..."
     curl "http://localhost:8983/solr/${dataset_core_name}/terms?wt=python&indent=true&terms.fl=features&terms.limit=-1" > "dictionary"
-    echo "Parsing dictionary into pickled file called vocabulary_pickled"
+    echo "Parsing dictionary into pickled file called vocabulary_pickled and fD_pickled"
     python parse_vocabulary_into_list.py dictionary
     echo "cleaning up"
     rm dictionary
@@ -66,6 +66,9 @@ else
     echo "Pickling input file..."
     python parse_document_into_sentences.py "${2%.*}_sentences_array"
 fi
+
+
+# Run summary generation with input files to create a summary
 
 
 
