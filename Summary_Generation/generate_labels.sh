@@ -1,6 +1,6 @@
 #!/bin/sh
 
-#  generate_australian_labels.sh
+#  generate_labels.sh
 #
 #
 #  Created by Hobey Kuhn on 11/18/13.

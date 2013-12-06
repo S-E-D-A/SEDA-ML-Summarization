@@ -32,7 +32,7 @@ from numpy import dot
 #import theano.tensor as T
 #from theano.tensor.shared_randomstreams import RandomStreams
 
-sys.path.append('/Users/hobeykuhn/Documents/Schoolwork/University of Michigan/MSAIL/SEDA-ML-Summarization');
+sys.path.append('../');
 
 from summary_generation_class import SummaryGeneration
 

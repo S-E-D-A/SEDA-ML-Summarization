@@ -9,7 +9,7 @@
 #    NOTE: Be sure that the solr_xml_files directory corresponds to the current document set!
 #
 # EXAMPLE
-#    python parse_document_into_sentences.py 06_001.xml
+#    python parse_document_into_sentences.py path/to/file/06_001.xml
 
 
 import sys
@@ -38,10 +38,41 @@ except:
     print "Trouble reading input file. Try again."
     exit()
 
+parser = ET.XMLParser()
+parser.parser.UseForeignDTD(True)
+parser.entity['eacute'] = 'e'
+parser.entity['nbsp'] = ' '
+parser.entity['tm'] = 'TM'
+parser.entity['reg'] = 'R'
+parser.entity['ccedil'] = 'c'
+parser.entity['iuml'] = 'i'
+parser.entity['agrave'] = 'A'
+parser.entity['egrave'] = 'E'
+parser.entity['aacute'] = 'A'
+parser.entity['ecirc'] = 'E'
+parser.entity['auml'] = 'A'
+parser.entity['szlig'] = 'B'
+parser.entity['ocirc'] = 'O'
+parser.entity['ouml'] = 'O'
+parser.entity['acirc'] = 'A'
+parser.entity['ouml'] = 'O'
+parser.entity['uuml'] = 'U'
+parser.entity['Eacute'] = 'E'
+parser.entity['igrave'] = 'I'
+parser.entity['aelig'] = 'ae'
+parser.entity['icirc'] = 'I'
+parser.entity['euml'] = 'E'
+parser.entity['oslash'] = 'O'
+parser.entity['Aring'] = 'A'
+parser.entity['yacute'] = 'y'
+parser.entity['ntilde'] = 'n'
+parser.entity['oslash'] = 'O'
+parser.entity['Ouml'] = 'O'
+
 
 # READ SENTENCES
 doc = infile.read()
-xmldoc = ET.fromstring(doc)
+xmldoc = ET.fromstring(doc, parser=parser);
 
 # PARSE INFILE
 sentences = []
