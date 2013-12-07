@@ -319,6 +319,9 @@ def test_DBN(finetune_lr=0.1, pretraining_epochs=100,
     
     #Number of hidden units in each layer
     layer_architecture = [1000, 250, 10, 250, 1000, vocab_size]
+    layer_arch_filename = '../data/Layer Architecture'
+    numpy.save(layer_arch_filename, layer_architecture)
+    print "...saved layer architecture to ", layer_arch_filename, ".npy"
     dbn = DBN(numpy_rng=numpy_rng, n_ins=vocab_size,
               hidden_layers_sizes=layer_architecture,
               n_outs=10)
@@ -421,9 +424,9 @@ def test_DBN(finetune_lr=0.1, pretraining_epochs=100,
                 done_looping = True
                 break
 
-    A1_filename = 'A1_matrix'
-    A2_filename = 'A2_matrix'
-    A3_filename = 'A3_matrix'
+    A1_filename = '../data/A1_matrix'
+    A2_filename = '../data/A2_matrix'
+    A3_filename = '../data/A3_matrix'
 
     end_time = time.clock()
     print(('Optimization complete with best validation score of %f %%,'

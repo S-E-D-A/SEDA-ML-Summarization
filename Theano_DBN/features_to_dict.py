@@ -60,7 +60,7 @@ def construct_dataset(doc_name, ndocs):
 	all_words_dict = {}
 	word_ind_dict = {}
 	ind_counter = 0;
-
+	total_vocabulary = []
 	#Change this to fit the type of value you want to extract
 	#i.e. 'tf', 'df', or 'tf-idf'
 	freq_type = 'tf-idf'	
@@ -73,11 +73,18 @@ def construct_dataset(doc_name, ndocs):
 		    else:
 		        all_words_dict[word_str] = 0		    
 			word_ind_dict[word_str] = ind_counter
+			total_vocabulary.append(word_str)
 			ind_counter = ind_counter + 1
+			
+	
 
 	print "total # of words/features = ...", len(all_words_dict)
 	#print all_words_dict
 	
+	vocab_filename = '../data/vocabulary_list'
+	numpy.save(vocab_filename, total_vocabulary)
+	print "...saved vocabulary list to ", vocab_filename,".npy"
+		
 	#Create blank training set matrix, size=(ndocs x |D|)
 	data_set = [];	
 	for i in xrange(ndocs):
@@ -86,7 +93,7 @@ def construct_dataset(doc_name, ndocs):
 	    	data_set[i].append(0)
 
 	doc_ind = 0;
-	
+
 	for docname in fdf:
 	    for word_ind in xrange(len(fdf[docname])):
 		for word_str in fdf[docname][word_ind]:
