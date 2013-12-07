@@ -32,9 +32,9 @@ from numpy import dot
 #import theano.tensor as T
 #from theano.tensor.shared_randomstreams import RandomStreams
 
-sys.path.append('/Users/hobeykuhn/Documents/Schoolwork/University of Michigan/MSAIL/SEDA-ML-Summarization');
+sys.path.append('../');
 
-from summ_generation import SummaryGeneration
+from summary_generation_class import SummaryGeneration
 
 
 vocabulary = ['cat', 'dog', 'mouse', 'fox', 'bear', 'tiger', 'ram', 'person', 'gen', 'f', 'd', 's', 'a', 'r', 'y']
