@@ -18,6 +18,8 @@ from rbm import RBM
 
 from features_to_dict import *
 
+from optparse import OptionParser
+
 class DBN(object):
     """Deep Belief Network
 
@@ -276,7 +278,8 @@ class DBN(object):
 
 def test_DBN(finetune_lr=0.1, pretraining_epochs=100,
              pretrain_lr=0.01, k=1, training_epochs=1000,
-             dataset='../data/mnist.pkl.gz', batch_size=10):
+             dataset='../data/australia_batch_2-dirty', batch_size=10,
+	     num_docs=100):
     """
     Demonstrates how to train and test a Deep Belief Network.
 
@@ -299,7 +302,7 @@ def test_DBN(finetune_lr=0.1, pretraining_epochs=100,
     """
 
     #datasets = load_data(dataset)
-    vocab_size, datasets = load_data_australia('australia_batch_2-dirty', 100)
+    vocab_size, datasets = load_data_australia(dataset, num_docs)
 
     train_set_x, train_set_y = datasets[0]
     valid_set_x, valid_set_y = datasets[1]
@@ -446,4 +449,9 @@ def test_DBN(finetune_lr=0.1, pretraining_epochs=100,
 
 
 if __name__ == '__main__':
-    test_DBN()
+    parser = OptionParser()
+    parser.add_option("-d", "--datapath", action="store", type="string",dest="data_file")
+    parser.add_option("-n", "--n_docs", action="store", type="int", dest="n_docs")
+    (options, args) = parser.parse_args()     
+
+    test_DBN(0.1,100,0.01,1,1000,options.data_file,10,options.n_docs)
