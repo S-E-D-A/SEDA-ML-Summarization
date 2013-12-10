@@ -1,0 +1,22 @@
+SUMMARY GENERATION README
+
+
+1) Generate Labels (optional)
+	If you wish to parse documents and retrieve their labeled summaries (for comparison with our generated summaries):
+		sh generate_summary.sh <dataset_name>
+
+2) Generate Summary
+	To generate a summary on a specific document, run:
+		sh generate_summary.sh <dataset_name> <basename of document> <query_document_in_pickled_list_format> <lambda score> <word limit>
+	
+	For example the following command will generate a summary of no more than 200 words on the australian document 07_222 with a query called query and a lambda score of 2:
+		sh generate_summary.sh Australia 07_222.xml query 2 200
+
+
+
+
+The generated summary will be stored as best_summary, a pickled list of words of sentences.  print_summary.py can be called to print the text to the terminal.
+
+
+
+
