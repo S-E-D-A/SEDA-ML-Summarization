@@ -46,16 +46,16 @@ vocabulary = []
 
 terms_list = new_dict['terms']['features']
 vocabulary = [x for x in terms_list if not isinstance(x, int)]
-fD = [x for x in terms_list if isinstance(x, int)]
+fD_values = [x for x in terms_list if isinstance(x, int)]
+
+
+fD_dictionary = dictionary = dict(zip(vocabulary, fD_values))
 
 
 # PICKLE AND EXPORT
 #    Titled: vocabulary_pickled
-with open('vocabulary_pickled', 'wb') as f:
-    pickle.dump(vocabulary, f)
-
 with open('fD_pickled', 'wb') as f:
-    pickle.dump(fD, f)
+    pickle.dump(fD_dictionary, f)
 
 
 

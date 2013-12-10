@@ -40,7 +40,7 @@ from summary_generation_class import SummaryGeneration
 vocabulary = ['cat', 'dog', 'mouse', 'fox', 'bear', 'tiger', 'ram', 'person', 'gen', 'f', 'd', 's', 'a', 'r', 'y']
 sentences = [['the','cat','jumped','over','the','moon'],['the','dog','fox','f','r'], ['gen', 'd', 's', 'mouse', 'something']]
 query= ['dog', 'f', 'r']
-fD = numpy.random.rand(1,15)
+fD = numpy.random.rand(15,)
 A_one = numpy.random.rand(15,15)
 A_two = numpy.random.rand(15,15)
 A_three = numpy.random.rand(15,15)
