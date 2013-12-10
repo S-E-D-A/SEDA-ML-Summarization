@@ -5,7 +5,11 @@
 #
 #  Created by Hobey Kuhn on 11/18/13.
 #
-
+# Desc:
+#	This script will generate labels for a given dataset
+#
+# Example:
+#	sh generate_labels.sh Australia
 
 
 DATASET_NAME="${1}"

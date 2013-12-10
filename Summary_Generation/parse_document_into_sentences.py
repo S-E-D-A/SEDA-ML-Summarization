@@ -80,7 +80,7 @@ table = string.maketrans("","")
 
 for sentence in xmldoc.iter('field'):
     if sentence.attrib == {'name': 'features'}:
-        removed_punc_sentence = sentence.text.translate(table, string.punctuation)
+	removed_punc_sentence = sentence.text.encode('utf8', 'ignore').translate(table, string.punctuation)
         words = removed_punc_sentence.split()
         sentences.append(words)
 

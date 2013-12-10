@@ -34,6 +34,7 @@ AUSTRALIAN_DATASET_LABELS_DIR="${DATA_DIR}/australian_dataset_labels"
 if [ "${DATASET_NAME}" = "Australia" ]; then
     dataset_labels_path="${AUSTRALIAN_DATASET_LABELS_DIR}"
     dataset_core_name="AustralianDataset"
+    dataset_path="${AUSTRALIAN_DATASET_DIR}/fulltext/"
 else
     echo "Invalid input in command line. Please read the README to learn how to use this script!"
     exit
@@ -70,7 +71,7 @@ if [ -f "${2%.*}_sentences_array" ]; then
     echo "Document specified has already been parsed into a pickled file. Skipping..."
 else
     echo "Pickling input file..."
-    python parse_document_into_sentences.py "${2%.*}_sentences_array"
+    python parse_document_into_sentences.py "${SOLR_DATA_DIR}/${DOCUMENT_NAME}"
 fi
 
 
