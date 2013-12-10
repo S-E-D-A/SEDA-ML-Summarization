@@ -88,7 +88,7 @@ class SummaryGeneration(object):
 			print "No AF Matrix Found. Creating memory maps..."
 			self.A_map = numpy.memmap('A_map.dat', dtype='float64', mode='w+', shape=self.A_mat.shape)
 			self.AF = numpy.memmap('prodmap.dat', dtype='float64', mode='w+', shape=self.A_mat.shape)
-			for y in range(0, 10):
+			for y in range(0, self.A_mat.shape[1]):
     				for x in range(0, len(fD)):
         				self.AF[x,y] = dot(numpy.transpose([fD[x]] * len(fD)), self.A_map[:,y])
     				print y
