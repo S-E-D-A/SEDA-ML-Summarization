@@ -29,6 +29,8 @@ import copy
 import numpy
 from numpy import dot
 
+import pickle
+
 # import theano
 # import theano.tensor as T
 # from theano.tensor.shared_randomstreams import RandomStreams
@@ -56,8 +58,6 @@ class SummaryGeneration(object):
 		self.lambd = lambd
 		self.N_s = N_s
 
-		self.AF = numpy.zeros(shape=(self.i,self.n))
-
 	
 	def buildAFMatrix(self, fD, A_one, A_two, A_three):
 		"""
@@ -71,16 +71,29 @@ class SummaryGeneration(object):
 
 		:param A_three: pairwise connections in third layer
 		"""
-				
-		assert (1, self.i) == fD.shape
+		
+		assert (self.i,) == fD.shape
 
-		self.F = numpy.transpose(numpy.tile(fD, [self.n, 1]))
 		self.A_one = A_one
 		self.A_two = A_two
 		self.A_three = A_three
-	
-		self.AF = dot(dot(dot(self.F, A_one), A_two), A_three)
+		self.A_mat = dot(dot(A_one, A_two), A_three)	
 
+		try:
+			print "Retrieving A Map..."
+			self.A_map = numpy.memmap('A_map.dat', dtype='float64', mode='r', shape=self.A_mat.shape)
+			print "Retrieving AF Map..."
+			self.AF = numpy.memmap('prodmap.dat', dtype='float64', mode='r', shape=self.A_mat.shape)
+		except:
+			print "No AF Matrix Found. Creating memory maps..."
+			self.A_map = numpy.memmap('A_map.dat', dtype='float64', mode='w+', shape=self.A_mat.shape)
+			self.AF = numpy.memmap('prodmap.dat', dtype='float64', mode='w+', shape=self.A_mat.shape)
+			for y in range(0, 10):
+    				for x in range(0, len(fD)):
+        				self.prodmap[x,y] = dot(numpy.transpose([fD[x]] * len(fD)), self.A_map[:,y])
+    				print y
+
+		self.AF = numpy.transpose(self.AF)
 
 	def wordExtraction(self):
 		"""
@@ -129,32 +142,44 @@ class SummaryGeneration(object):
 		self.sentenceLengthVector = numpy.zeros(shape=(1,self.t))
 		self.sentenceIndexVector = numpy.zeros(shape=(1,self.t))
 
+		print "num sentences: " + str(self.t)
 
-		for x in range(0,self.t):
-			cur_sentence = self.sentences[x]
-			numWords = len(cur_sentence)
+		print "locating sentence information data..."
+		try:
+			self.sentenceInformation = pickle.load(open("sentenceInformation", "rb"))
+			self.sentenceIndexVector = self.sentenceInformation[0]
+			self.sentenceImportanceVector = self.sentenceInformation[1]
+			self.sentenceLengthVector = self.sentenceInformation[2]
+		except:
+			print "file not found. regenerating..."
+			for x in range(0,self.t):
+				cur_sentence = self.sentences[x]
+				numWords = len(cur_sentence)
 
-			self.sentenceLengthVector[0,x] = numWords
+				self.sentenceLengthVector[0,x] = numWords
 
-			score = 0
+				score = 0
 
-			for i in range(0, numWords):
-				cur_word = cur_sentence[i]
+				for i in range(0, numWords):
+					cur_word = cur_sentence[i]
 				
-				w = 0
+					w = 0
 				
-				if (cur_word in self.rolloutUN and cur_word in query):
-					w = self.lambd
-				elif (cur_word in self.rolloutUN):
-					w = 1
+					if (cur_word in self.rolloutUN and cur_word in query):
+						w = self.lambd
+					elif (cur_word in self.rolloutUN):
+						w = 1
 				
-				score = score + w
+					score = score + w
 
-			self.sentenceImportanceVector[0,x] = score	
-			self.sentenceIndexVector[0,x] = x
-
-		self.sentenceInformation = [self.sentenceIndexVector, self.sentenceImportanceVector, self.sentenceLengthVector]			
+				self.sentenceImportanceVector[0,x] = score	
+				self.sentenceIndexVector[0,x] = x
 		
+				print "Evaluated Sentence: " + str(x)
+
+			self.sentenceInformation = [self.sentenceIndexVector, self.sentenceImportanceVector, self.sentenceLengthVector]			
+			print "writing sentence information to file..."
+			pickle.dump(self.sentenceInformation, open("sentenceInformation", "wb"))	
 
 
 	def optimizeSummary(self):
@@ -169,7 +194,28 @@ class SummaryGeneration(object):
 		scores = [] #2D list containing vectors of scores of summary lists
 		solutions = [] #2D list containing vectors of indices of sentences in summary
 
+		print "finding summary recursively..."		
 
+		self.findSummaryDP()
+		
+		self.best_summary_indices = []
+		K = int(self.N_s) - 1
+
+		for i in range (len(self.sentenceIndexVector[0]) - 1, 0, -1):
+			if self.keep[i][K] == 1:
+				self.best_summary_indices.append(i)
+				K = K - self.sentenceLengthVector[0][i]
+		
+		self.best_summary_score = self.m_matrix
+		self.best_summary = []
+
+		for x in range(0,len(self.best_summary_indices)):
+                        cur_index = self.best_summary_indices[x]
+                        self.best_summary.append(self.sentences[cur_index])
+
+
+
+		"""
 		self.findSummary(lambd_in, score, cur_summ, remaining_sentences, solutions, scores, self.N_s)
 
 
@@ -183,14 +229,37 @@ class SummaryGeneration(object):
 		
 		self.best_summary = []
 
+
 		for x in range(0,len(self.best_summary_indices)):
 			cur_index = self.best_summary_indices[x]
 			self.best_summary.append(self.sentences[cur_index.astype(int)])
+		"""	
+
+	def findSummaryDP(self):
+		"""
+		:desc: dynamic programming solution for solving optimization problem
+		returns matrix of scores and word counts. find max for answer
+		"""
+        
+		# initialize m_matrix
+		matrix_shape = (int(len(self.sentenceImportanceVector[0])), int(self.N_s))
+
+		self.m_matrix = numpy.zeros(matrix_shape)
+		self.keep = numpy.zeros(matrix_shape)	    
+
+		# run dP
+		for i in range (1,len(self.sentenceIndexVector[0])):
+			for j in range(0,int(self.N_s)):
+				if j >= self.sentenceLengthVector[0][i]:
+					self.m_matrix[i][j] = max(self.m_matrix[i-1][j], self.m_matrix[i-1][j-self.sentenceLengthVector[0][i]] + self.sentenceImportanceVector[0][i])
+					self.keep[i][j] = 1
+				else:
+					self.m_matrix[i][j] = self.m_matrix[i-1][j] 
 
 
 
 
-	def findSummary(self, lambd_in, score, cur_summ, remaining_sentences, solutions, scores, N_s):
+    	def findSummary(self, lambd_in, score, cur_summ, remaining_sentences, solutions, scores, N_s):
 		"""
 		:desc: recursive function for solving the optimization problem
 			returns the collection of summary possibilities in solutions list
@@ -209,7 +278,6 @@ class SummaryGeneration(object):
 
 		:param N_s: max number of words in a summary
 		"""
-	
 
 		if (lambd_in > N_s):
 			return	
@@ -244,6 +312,8 @@ class SummaryGeneration(object):
 			if (cur_summ not in solutions):
 				solutions.append(cur_summ)
 				scores.append(score)
+		
+		print "length of remaining sentences: " + str(len(remaining_sentences[0][0]))
 		return
 
 
