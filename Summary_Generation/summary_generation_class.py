@@ -90,7 +90,7 @@ class SummaryGeneration(object):
 			self.AF = numpy.memmap('prodmap.dat', dtype='float64', mode='w+', shape=self.A_mat.shape)
 			for y in range(0, 10):
     				for x in range(0, len(fD)):
-        				self.prodmap[x,y] = dot(numpy.transpose([fD[x]] * len(fD)), self.A_map[:,y])
+        				self.AF[x,y] = dot(numpy.transpose([fD[x]] * len(fD)), self.A_map[:,y])
     				print y
 
 		self.AF = numpy.transpose(self.AF)
