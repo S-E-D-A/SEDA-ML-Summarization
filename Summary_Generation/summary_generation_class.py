@@ -77,7 +77,10 @@ class SummaryGeneration(object):
 		self.A_one = A_one
 		self.A_two = A_two
 		self.A_three = A_three
-		self.A_mat = dot(dot(A_one, A_two), A_three)	
+		self.A_mat = dot(dot(A_one, A_two), A_three)
+		print self.A_mat	
+		print fD
+		print self.A_mat.shape[1]
 
 		try:
 			print "Retrieving A Map..."
@@ -88,6 +91,9 @@ class SummaryGeneration(object):
 			print "No AF Matrix Found. Creating memory maps..."
 			self.A_map = numpy.memmap('A_map.dat', dtype='float64', mode='w+', shape=self.A_mat.shape)
 			self.AF = numpy.memmap('prodmap.dat', dtype='float64', mode='w+', shape=self.A_mat.shape)
+			
+			self.A_map[:] = self.A_mat[:]
+
 			for y in range(0, self.A_mat.shape[1]):
     				for x in range(0, len(fD)):
         				self.AF[x,y] = dot(numpy.transpose([fD[x]] * len(fD)), self.A_map[:,y])
@@ -254,7 +260,7 @@ class SummaryGeneration(object):
 					self.m_matrix[i][j] = max(self.m_matrix[i-1][j], self.m_matrix[i-1][j-self.sentenceLengthVector[0][i]] + self.sentenceImportanceVector[0][i])
 					self.keep[i][j] = 1
 				else:
-					self.m_matrix[i][j] = self.m_matrix[i-1][j] 
+					self.m_matrix[i][j] = self.m_matrix[i-1][j]
 
 
 
