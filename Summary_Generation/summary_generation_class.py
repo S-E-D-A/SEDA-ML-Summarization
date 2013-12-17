@@ -208,7 +208,9 @@ class SummaryGeneration(object):
 		solutions = [] #2D list containing vectors of indices of sentences in summary
 
 		print "finding summary recursively..."		
-
+		
+		# DYNAMIC PROGRAMMING METHOD
+		"""
 		self.findSummaryDP()
 		
 		self.best_summary_indices = []
@@ -220,14 +222,21 @@ class SummaryGeneration(object):
 				K = K - self.sentenceLengthVector[0][i]
 		
 		self.best_summary_score = self.m_matrix
-		self.best_summary = []
+		"""
 
+		# GREEDY APPROXIMATION METHOD
+		self.best_summary_indices = []
+		self.greedyApproximation()
+
+		self.best_summary = []
+		
 		for x in range(0,len(self.best_summary_indices)):
                         cur_index = self.best_summary_indices[x]
                         self.best_summary.append(self.sentences[cur_index])
+		self.best_summary_score = 0
 
 
-
+		# BRUTE FORCE METHOD
 		"""
 		self.findSummary(lambd_in, score, cur_summ, remaining_sentences, solutions, scores, self.N_s)
 
@@ -268,6 +277,34 @@ class SummaryGeneration(object):
 					self.keep[i][j] = 1
 				else:
 					self.m_matrix[i][j] = self.m_matrix[i-1][j]
+
+
+
+
+	def greedyApproximation(self):
+		"""
+		:desc: dynamic programming solution for solving optimization problem
+			Greedy Approximation Algorithm
+		"""
+		for item in self.sentenceLengthVector[0]:
+			if item == 0:
+				self.sentenceLengthVector[0] = 100000000
+
+		new_importance_list = [float(x) / float(y) for x,y in zip(self.sentenceImportanceVector[0], self.sentenceLengthVector[0])]
+		indices = sorted(range(len(new_importance_list)), key=lambda k: new_importance_list[k])
+		self.sentenceLengthVector[0] = numpy.argsort(indices)
+		self.sentenceIndexVector[0] = numpy.argsort(indices)
+		self.sentenceImportanceVector[0] = numpy.argsort(indices)
+		new_importance_list = numpy.argsort(indices)
+
+		self.testing_size = 0
+		for i in range(0, len(self.sentenceIndexVector[0])):
+			current_el_size = self.sentenceLengthVector[0][i]
+			if (self.testing_size + current_el_size) < int(self.N_s):
+				self.best_summary_indices.append(int(self.sentenceIndexVector[0][i]))
+				self.testing_size = self.testing_size + current_el_size
+			else:
+				break
 
 
 
