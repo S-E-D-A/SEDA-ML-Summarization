@@ -158,6 +158,10 @@ class SummaryGeneration(object):
 			self.sentenceLengthVector = self.sentenceInformation[2]
 		except:
 			print "file not found. regenerating..."
+
+			UN_dict = dict((el, 0) for el in self.rolloutUN)
+			query_dict = dict((el, 0) for el in query)
+
 			for x in range(0,self.t):
 				cur_sentence = self.sentences[x]
 				numWords = len(cur_sentence)
@@ -171,9 +175,12 @@ class SummaryGeneration(object):
 				
 					w = 0
 				
-					if (cur_word in self.rolloutUN and cur_word in query):
+					#if (cur_word in self.rolloutUN and cur_word in query):
+					if (cur_word in UN_dict and cur_word in query_dict):
 						w = self.lambd
-					elif (cur_word in self.rolloutUN):
+					
+					#elif (cur_word in self.rolloutUN):
+					elif (cur_word in UN_dict):
 						w = 1
 				
 					score = score + w
@@ -181,7 +188,7 @@ class SummaryGeneration(object):
 				self.sentenceImportanceVector[0,x] = score	
 				self.sentenceIndexVector[0,x] = x
 		
-				print "Evaluated Sentence: " + str(x)
+				#print "Evaluated Sentence: " + str(x)
 
 			self.sentenceInformation = [self.sentenceIndexVector, self.sentenceImportanceVector, self.sentenceLengthVector]			
 			print "writing sentence information to file..."
