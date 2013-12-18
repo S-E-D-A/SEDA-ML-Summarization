@@ -5,19 +5,19 @@ SCRIPT_PATH=$( cd $(dirname $0) ; pwd -P )
 
 ROUGE_FILE_NAME="ROUGE-1.5.5.tgz"
 ROUGE_URL="https://www.dropbox.com/s/plcw48pi0rjzkge/${ROUGE_FILE_NAME}"
-DOT_ROUGE_INSTALLED=".rougeinstalled"
+DOT_ROUGE_INSTALLED="${SCRIPT_PATH}/.rougeinstalled"
 
 if [ ! -f "${DOT_ROUGE_INSTALLED}" ]; then
 	echo "Installing ROUGE.\n"
 
-	echo "${ROUGE_URL}" -O "${SCRIPT_PATH}/${ROUGE_FILE_NAME}"
 	wget "${ROUGE_URL}" -O "${SCRIPT_PATH}/${ROUGE_FILE_NAME}"
 
 	perl -MCPAN -e 'force install XML::DOM'
 
-	tar -zxvf "${ROUGE_FILE_NAME}"
+	tar -zxvf "${SCRIPT_PATH}/${ROUGE_FILE_NAME}" \
+		--directory="${SCRIPT_PATH}"
 
-	rm "${ROUGE_FILE_NAME}"
+	rm "${SCRIPT_PATH}/${ROUGE_FILE_NAME}"
 
 	touch "${DOT_ROUGE_INSTALLED}"
 else
