@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# If SEDA_DEBUG_MODe is set show detailed output
 if [ ! -z ${SEDA_DEBUG_MODE} ]
 then
 	set -ex
@@ -31,7 +32,15 @@ else
 	OUTPUT_DIR="${SCRIPT_PATH}/../data/${1}"
 fi
 
+# Generate ROUGE results
 eval "${ROUGE}" -e "${ROUGE_DIRECTORY}/data" \
 	-f A -a -x -s -m -2 -4 -u "${OUTPUT_DIR}/rougeFiles/settings.xml" > \
 	"${OUTPUT_DIR}/results.out"
 
+# Convert the ROUGE generated results to a csv format
+if [ -z $1 ]
+then
+	sh "${SCRIPT_PATH}/generation_scripts/convertResults.sh" 
+else
+	sh "${SCRIPT_PATH}/generation_scripts/convertResults.sh" ${1}
+fi
