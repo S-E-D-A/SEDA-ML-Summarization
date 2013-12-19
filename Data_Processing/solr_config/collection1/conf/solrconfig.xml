@@ -72,17 +72,17 @@
        The examples below can be used to load some solr-contribs along 
        with their external dependencies.
     -->
-  <lib dir="../../../contrib/extraction/lib" regex=".*\.jar" />
-  <lib dir="../../../dist/" regex="solr-cell-\d.*\.jar" />
+  <lib dir="./lib/contrib/extraction/lib" regex=".*\.jar" />
+  <lib dir="./lib/dist/" regex="solr-cell-\d.*\.jar" />
 
-  <lib dir="../../../contrib/clustering/lib/" regex=".*\.jar" />
-  <lib dir="../../../dist/" regex="solr-clustering-\d.*\.jar" />
+  <lib dir="./lib/contrib/clustering/lib/" regex=".*\.jar" />
+  <lib dir="./lib/dist/" regex="solr-clustering-\d.*\.jar" />
 
-  <lib dir="../../../contrib/langid/lib/" regex=".*\.jar" />
-  <lib dir="../../../dist/" regex="solr-langid-\d.*\.jar" />
+  <lib dir="./lib/contrib/langid/lib/" regex=".*\.jar" />
+  <lib dir="./lib/dist/" regex="solr-langid-\d.*\.jar" />
 
-  <lib dir="../../../contrib/velocity/lib" regex=".*\.jar" />
-  <lib dir="../../../dist/" regex="solr-velocity-\d.*\.jar" />
+  <lib dir="./lib/contrib/velocity/lib" regex=".*\.jar" />
+  <lib dir="./lib/dist/" regex="solr-velocity-\d.*\.jar" />
 
   <!-- an exact 'path' can be used instead of a 'dir' to specify a 
        specific jar file.  This will cause a serious error to be logged 
@@ -691,7 +691,7 @@
        handleSelect="true" is not recommended for new users, but is the default
        for backwards compatibility
     -->
-  <requestDispatcher handleSelect="false" >
+  <requestDispatcher handleSelect="true" >
     <!-- Request Parsing
 
          These settings indicate how Solr Requests may be parsed, and
@@ -1043,7 +1043,7 @@
     -->
   <requestHandler name="/update/extract" 
                   startup="lazy"
-                  class="solr.extraction.ExtractingRequestHandler" >
+                  class="org.apache.solr.handler.extraction.ExtractingRequestHandler" >
     <lst name="defaults">
       <str name="lowernames">true</str>
       <str name="uprefix">ignored_</str>
@@ -1052,6 +1052,7 @@
       <str name="captureAttr">true</str>
       <str name="fmap.a">links</str>
       <str name="fmap.div">ignored_</str>
+      <str name="fmap.Last-Modified">last_modified</str>
     </lst>
   </requestHandler>
 

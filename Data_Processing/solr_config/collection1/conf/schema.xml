@@ -115,6 +115,7 @@
 
 
    <field name="features" type="text_general" indexed="true" stored="true" multiValued="true" termVectors="true"/>
+   <field name="content" type="text_general" indexed="true" stored="true" multiValued="true" termVectors="true"/>
 
 
    <!-- Common metadata fields, named specifically to match up with
