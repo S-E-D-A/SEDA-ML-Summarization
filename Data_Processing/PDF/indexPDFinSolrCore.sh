@@ -1,5 +1,11 @@
 #!/bin/bash
 
+###
+### This script takes a text file and indexes it as a document in Solr
+### arg1: The core name that this is indexed to
+### arg2: The path of the file with the text
+###
+
 # If SEDA_DEBUG_MODE is set show detailed output
 if [ ! -z ${SEDA_DEBUG_MODE} ]
 then

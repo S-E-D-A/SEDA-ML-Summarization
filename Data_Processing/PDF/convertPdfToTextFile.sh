@@ -1,5 +1,11 @@
 #!/bin/bash
 
+###
+### This script takes a PDF file and converts it into a text document
+### arg1: input file path
+### arg2: output file path
+###
+
 # If SEDA_DEBUG_MODE is set show detailed output
 if [ ! -z ${SEDA_DEBUG_MODE} ]
 then
