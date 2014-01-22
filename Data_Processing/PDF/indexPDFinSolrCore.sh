@@ -12,10 +12,14 @@ then
         set -ex
 fi
 
-# The function to describe how to run the script
-usage() { echo "Usage: $0 [-c <core_name>] [-p <path_to_file>]" 1>&2; exit 1; }
+# Variable of whether or not to Recreate core
+CREATE_CORE=0
 
-while getopts ":c:p:" o; do
+# The function to describe how to run the script
+USAGE_STRING="Usage: $0 [-c <core_name>] [-p <path_to_file>] [-n create core ][-h help]"
+usage() { echo ${USAGE_STRING} 1>&2; exit 1; }
+
+while getopts ":c:p:nh" o; do
     case "${o}" in
         c)
             CORE_NAME=${OPTARG}
@@ -23,6 +27,12 @@ while getopts ":c:p:" o; do
         p)
             PATH_TO_FILE=${OPTARG}
             ;;
+	n)
+	    CREATE_CORE=1
+	    ;;
+	h)
+	    usage
+	    ;;
         *)
             usage
             ;;
@@ -39,22 +49,24 @@ SCRIPT_PATH=$( cd $(dirname $0) ; pwd -P )
 
 SOLR_BASE="http://localhost:8983/solr"
 
-# Delete the index if it already exists
-curl "${SOLR_BASE}/admin/cores?action=UNLOAD&core=${CORE_NAME}&deleteInstanceDir=true"
+if [ ${CREATE_CORE} -eq 1 ]; then
+	# Delete the index if it already exists
+	curl "${SOLR_BASE}/admin/cores?action=UNLOAD&core=${CORE_NAME}&deleteInstanceDir=true"
 
-# Remove the core if it already exists
-rm -rf "/home/${USER}/${CORE_NAME}"
+	# Remove the core if it already exists
+	rm -rf "/home/${USER}/${CORE_NAME}"
 
-# Copy new instanceDir over for this core
-cp -af "${SCRIPT_PATH}/../solr_config" "/home/${USER}/${CORE_NAME}"
+	# Copy new instanceDir over for this core
+	cp -af "${SCRIPT_PATH}/../solr_config" "/home/${USER}/${CORE_NAME}"
 
-# Build core
-echo "Building new SOLR core..."
-curl "${SOLR_BASE}/admin/cores?action=CREATE&name=${CORE_NAME}&instanceDir=/home/vagrant/${CORE_NAME}/collection1"
+	# Build core
+	echo "Building new SOLR core..."
+	curl "${SOLR_BASE}/admin/cores?action=CREATE&name=${CORE_NAME}&instanceDir=/home/vagrant/${CORE_NAME}/collection1"
+fi
 
 # post files to core
 #java -Durl="${SOLR_BASE}/${1}/update" -jar "${SCRIPT_PATH}/../post.jar" "${2}"
-curl "${SOLR_BASE}/${CORE_NAME}/update/extract?stream.file=`readlink -f ${PATH_TO_FILE}`&stream.contentType=application/pdf&literal.id=${CORE_NAME}"
+curl "${SOLR_BASE}/${CORE_NAME}/update/extract?stream.file=`readlink -f ${PATH_TO_FILE}`&stream.contentType=application/pdf&literal.id=`basename ${PATH_TO_FILE}`"
 
 # Run optimize core so the core  information is up to date
 curl "${SOLR_BASE}/${CORE_NAME}/update?optimize=true"
