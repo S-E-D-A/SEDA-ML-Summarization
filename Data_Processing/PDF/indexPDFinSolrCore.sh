@@ -64,8 +64,7 @@ if [ ${CREATE_CORE} -eq 1 ]; then
 	curl "${SOLR_BASE}/admin/cores?action=CREATE&name=${CORE_NAME}&instanceDir=/home/vagrant/${CORE_NAME}/collection1"
 fi
 
-# post files to core
-#java -Durl="${SOLR_BASE}/${1}/update" -jar "${SCRIPT_PATH}/../post.jar" "${2}"
+# Post files to core
 curl "${SOLR_BASE}/${CORE_NAME}/update/extract?stream.file=`readlink -f ${PATH_TO_FILE}`&stream.contentType=application/pdf&literal.id=`basename ${PATH_TO_FILE}`"
 
 # Run optimize core so the core  information is up to date
