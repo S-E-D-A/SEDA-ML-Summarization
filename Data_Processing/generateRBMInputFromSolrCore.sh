@@ -13,27 +13,47 @@ then
   set -ex
 fi
 
-# Check if there are 2 arguments, one for core name, other for text file
-# Optional check for field name as argument
-if [ $# -lt 2 ] || [ $# -gt 3 ]; then
-  echo "#############################################"
-  echo "Error, incorrect number of arguments supplied"
-  echo "Usage: $0 CORE_NAME PATH_AND_OUTPUT_NAME OPTIONAL_field_name"
-  exit
+# The function to describe how to run the script
+USAGE_STRING="Usage: $0 [-c <core_name>] [-p <output_path_and_file>] [-f OPTIONAL_field_name ][-h help]"
+usage() { echo ${USAGE_STRING} 1>&2; exit 1; }
+
+while getopts ":c:p:f:h" o; do
+    case "${o}" in
+        c)
+            CORE_NAME=${OPTARG}
+            ;;
+        p)
+            PATH_TO_FILE=${OPTARG}
+            ;;
+        f)
+            FIELD_NAME=${OPTARG}
+            ;;
+        h)
+            usage
+            ;;
+        *)
+            usage
+            ;;
+    esac
+done
+shift $((OPTIND-1))
+
+if [ -z "${PATH_TO_FILE}" ] || [ -z "${CORE_NAME}" ]; then
+    usage
 fi
 
 TERM_VECTOR_FIELD="content"
 # Optional argument of field name, set if it exists
-if [ ! -z ${3} ]; then
-  TERM_VECTOR_FIELD="${3}"
+if [ ! -z ${FIELD_NAME} ]; then
+  TERM_VECTOR_FIELD="${FIELD_NAME}"
 fi
 
 BASE_URL="http://localhost:8983/solr"
-CORE="${1}"
+CORE="${CORE_NAME}"
 QUERY="tvrh?q=*%3A*&wt=python&indent=true&tv.fl=${TERM_VECTOR_FIELD}&tv.all=true&fl=false&start=0&rows=999999999"
 FINAL_QUERY="${BASE_URL}/${CORE}/${QUERY}"
 
 echo ${FINAL_QUERY}
-echo "Writing ${1} dataset term frequencies to ${2}" 
+echo "Writing ${CORE_NAME} dataset term frequencies to ${PATH_TO_FILE}" 
 
-curl "${FINAL_QUERY}" > "${2}"
+curl "${FINAL_QUERY}" > "${PATH_TO_FILE}"
