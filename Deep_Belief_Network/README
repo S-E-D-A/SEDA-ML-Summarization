@@ -1,0 +1,2 @@
+To run:
+ sh train.sh -p SOLR_tf_file -n number_of_documents

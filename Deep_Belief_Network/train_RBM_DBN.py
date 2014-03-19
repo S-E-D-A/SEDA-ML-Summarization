@@ -12,10 +12,18 @@ import theano
 import theano.tensor as T
 from theano.tensor.shared_randomstreams import RandomStreams
 
-from logistic_sgd import LogisticRegression, load_data
-from mlp import HiddenLayer
+sys.path.append('helper_classes/')
+
+from logistic_sgd import LogisticRegression
+from load_data import load_data
+from HiddenLayer import HiddenLayer
 from rbm import RBM
 
+sys.path.append('input_processing/')
+
+from features_to_dict import *
+
+from optparse import OptionParser
 
 class DBN(object):
     """Deep Belief Network
@@ -126,16 +134,34 @@ class DBN(object):
             input=self.sigmoid_layers[-1].output,
             n_in=hidden_layers_sizes[-1],
             n_out=n_outs)
-        self.params.extend(self.logLayer.params)
+	#Because logistic layer isn't used in gradient computation,
+	#we remove these symbolic parameters from the RBM
+        #self.params.extend(self.logLayer.params)
+	
+	#Reconstructed output of RBM
+	x_recons = self.sigmoid_layers[-1].output
 
+	#Uses binary cross entropy to compute cost between input and reconstruction
+	self.finetune_cost = theano.tensor.nnet.binary_crossentropy(x_recons,self.x).mean()
+	###ORIGINAL THEANO CODE###
         # compute the cost for second phase of training, defined as the
         # negative log likelihood of the logistic regression (output) layer
-        self.finetune_cost = self.logLayer.negative_log_likelihood(self.y)
+        #self.finetune_cost = self.logLayer.negative_log_likelihood(self.y)
+	###
 
         # compute the gradients with respect to the model parameters
         # symbolic variable that points to the number of errors made on the
         # minibatch given by self.x and self.y
-        self.errors = self.logLayer.errors(self.y)
+        self.errors = self.finetune_cost
+
+
+    #Makes the last n_layers/2 weight matrices in a symmetric RBM
+    #equal to the transpose of the first n_layers/2 weight matrices
+
+    def make_weights_symmetric(self):
+	print "...Making weights symmetric"
+	for ind in xrange((self.n_layers)/2):
+	    self.rbm_layers[self.n_layers - ind - 1].W.container.storage[0] = numpy.transpose(self.rbm_layers[ind].W.container.storage[0])
 
     def pretraining_functions(self, train_set_x, batch_size, k):
         '''Generates a list of functions, for performing one step of
@@ -230,19 +256,19 @@ class DBN(object):
               givens={self.x: train_set_x[index * batch_size:
                                           (index + 1) * batch_size],
                       self.y: train_set_y[index * batch_size:
-                                          (index + 1) * batch_size]})
+                                          (index + 1) * batch_size]}, on_unused_input='ignore')
 
         test_score_i = theano.function([index], self.errors,
                  givens={self.x: test_set_x[index * batch_size:
                                             (index + 1) * batch_size],
                          self.y: test_set_y[index * batch_size:
-                                            (index + 1) * batch_size]})
+                                            (index + 1) * batch_size]}, on_unused_input='ignore')
 
         valid_score_i = theano.function([index], self.errors,
               givens={self.x: valid_set_x[index * batch_size:
                                           (index + 1) * batch_size],
                       self.y: valid_set_y[index * batch_size:
-                                          (index + 1) * batch_size]})
+                                          (index + 1) * batch_size]}, on_unused_input='ignore')
 
         # Create a function that scans the entire validation set
         def valid_score():
@@ -257,7 +283,8 @@ class DBN(object):
 
 def test_DBN(finetune_lr=0.1, pretraining_epochs=100,
              pretrain_lr=0.01, k=1, training_epochs=1000,
-             dataset='../data/mnist.pkl.gz', batch_size=10):
+             dataset='../data/australia_batch_2-dirty', batch_size=2,
+	     num_docs=100):
     """
     Demonstrates how to train and test a Deep Belief Network.
 
@@ -279,7 +306,8 @@ def test_DBN(finetune_lr=0.1, pretraining_epochs=100,
     :param batch_size: the size of a minibatch
     """
 
-    datasets = load_data(dataset)
+    #datasets = load_data(dataset)
+    vocab_size, datasets = load_dataset(dataset, num_docs)
 
     train_set_x, train_set_y = datasets[0]
     valid_set_x, valid_set_y = datasets[1]
@@ -292,8 +320,18 @@ def test_DBN(finetune_lr=0.1, pretraining_epochs=100,
     numpy_rng = numpy.random.RandomState(123)
     print '... building the model'
     # construct the Deep Belief Network
-    dbn = DBN(numpy_rng=numpy_rng, n_ins=28 * 28,
-              hidden_layers_sizes=[1000, 1000, 1000],
+
+    #Number of inputs
+    #vocab_size = 28*28
+    #vocab_size = 29689
+    
+    #Number of hidden units in each layer
+    layer_architecture = [1000, 250, 10, 250, 1000, vocab_size]
+    layer_arch_filename = '../data/Layer Architecture'
+    numpy.save(layer_arch_filename, layer_architecture)
+    print "...saved layer architecture to ", layer_arch_filename, ".npy"
+    dbn = DBN(numpy_rng=numpy_rng, n_ins=vocab_size,
+              hidden_layers_sizes=layer_architecture,
               n_outs=10)
 
     #########################
@@ -357,7 +395,8 @@ def test_DBN(finetune_lr=0.1, pretraining_epochs=100,
     while (epoch < training_epochs) and (not done_looping):
         epoch = epoch + 1
         for minibatch_index in xrange(n_train_batches):
-
+	    #Make weights symmetric again on each iteration
+	    dbn.make_weights_symmetric()
             minibatch_avg_cost = train_fn(minibatch_index)
             iter = (epoch - 1) * n_train_batches + minibatch_index
 
@@ -365,7 +404,7 @@ def test_DBN(finetune_lr=0.1, pretraining_epochs=100,
 
                 validation_losses = validate_model()
                 this_validation_loss = numpy.mean(validation_losses)
-                print('epoch %i, minibatch %i/%i, validation error %f %%' % \
+                print('epoch %i, minibatch %i/%i, finetune cost: %f %%' % \
                       (epoch, minibatch_index + 1, n_train_batches,
                        this_validation_loss * 100.))
 
@@ -393,6 +432,10 @@ def test_DBN(finetune_lr=0.1, pretraining_epochs=100,
                 done_looping = True
                 break
 
+    A1_filename = '../data/A1_matrix'
+    A2_filename = '../data/A2_matrix'
+    A3_filename = '../data/A3_matrix'
+
     end_time = time.clock()
     print(('Optimization complete with best validation score of %f %%,'
            'with test performance %f %%') %
@@ -402,6 +445,18 @@ def test_DBN(finetune_lr=0.1, pretraining_epochs=100,
                           ' ran for %.2fm' % ((end_time - start_time)
                                               / 60.))
 
+    print "...Saving A1 matrix to: ", A1_filename, ".npy"
+    numpy.save(A1_filename, dbn.rbm_layers[0].W.container.storage[0])
+    print "...Saving A2 matrix to: ", A2_filename, ".npy"
+    numpy.save(A2_filename, dbn.rbm_layers[1].W.container.storage[0])
+    print "...Saving A3 matrix to: ", A3_filename, ".npy"
+    numpy.save(A3_filename, dbn.rbm_layers[2].W.container.storage[0])
+
 
 if __name__ == '__main__':
-    test_DBN()
+    parser = OptionParser()
+    parser.add_option("-p", "--path_to_file", action="store", type="string",dest="data_file")
+    parser.add_option("-n", "--n_docs", action="store", type="int", dest="n_docs")
+    (options, args) = parser.parse_args()     
+
+    test_DBN(0.1,100,0.01,1,1000,options.data_file,10,options.n_docs)

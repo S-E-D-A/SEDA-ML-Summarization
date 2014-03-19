@@ -2,7 +2,7 @@ import theano
 import numpy
 import random
 
-from clean_doc import *
+from process_solr_output import *
 
 #Converts the list passed into it into dictionary format,
 #in the form specified below, to be used to extract
@@ -30,7 +30,7 @@ def to_full_feature_list(doc_name, ndocs):
 	
 	
 	doc_string = open(doc_name).read()
-	doc_string = clean_doc(doc_string)
+	doc_string = process_solr_output(doc_string)
 	
 	feature_list = eval('[{0}]'.format(doc_string))
 	dwf = []
@@ -42,12 +42,12 @@ def to_full_feature_list(doc_name, ndocs):
 	    index = i*2
             dwf.append(to_dict([feature_list[index], feature_list[index + 1]]))
 	    dt[i] = feature_list[index]
-	    for j in xrange(len(dwf[i][dt[i]]['features'])/2):
+	    for j in xrange(len(dwf[i][dt[i]]['content'])/2):
 		feature_index = j*2
 		try:    	
-			full_dict_features[feature_list[index]].append(to_dict([ dwf[i][dt[i]]['features'][feature_index] , dwf[i][dt[i]]['features'][feature_index + 1] ]))
+			full_dict_features[feature_list[index]].append(to_dict([ dwf[i][dt[i]]['content'][feature_index] , dwf[i][dt[i]]['content'][feature_index + 1] ]))
 		except:
-			full_dict_features[feature_list[index]] = [to_dict([ dwf[i][dt[i]]['features'][feature_index] , dwf[i][dt[i]]['features'][feature_index + 1] ])]	
+			full_dict_features[feature_list[index]] = [to_dict([ dwf[i][dt[i]]['content'][feature_index] , dwf[i][dt[i]]['content'][feature_index + 1] ])]	
 	return dwf, dt, full_dict_features
 
 #Extracts the feature lists given the document name and 
@@ -109,9 +109,9 @@ def split_data(data_set, ndocs):
 	#train_set = data_set[40:]
 	#valid_set = data_set[0:20]
 	#test_set = data_set[20:40]
-        train_set = data_set[0:ndocs/2]
-        valid_set = data_set[ndocs/2:ndocs/2 + ndocs/4]
-        test_set = data_set[ndocs/2 + ndocs/4:]
+        train_set = data_set[0:ndocs]*10
+        valid_set = data_set[0:ndocs]*10
+        test_set = data_set[0:ndocs]*10
 	return train_set, valid_set, test_set
 
 #Makes the data shared to work with theano DBN.py
@@ -120,25 +120,25 @@ def make_shared_data(data_subset, borrow = True):
 						dtype=theano.config.floatX),
 				borrow = borrow)
 
-def load_data_australia(doc_name, ndocs):
-	trs, vs, tes = split_data(construct_dataset(doc_name, ndocs), ndocs)
-    	nfeats = len(trs[0])
+def load_dataset(doc_name, ndocs):
+	train_set, valid_set, test_set = split_data(construct_dataset(doc_name, ndocs), ndocs)
+    	nfeats = len(train_set[0])
        
-	tr_x = make_shared_data(trs)
-	val_x = make_shared_data(vs)
-	tes_x = make_shared_data(tes)	
+	tr_x = make_shared_data(train_set)
+	val_x = make_shared_data(valid_set)
+	tes_x = make_shared_data(test_set)
 
 	#Add garbage y-values to appease theano
-	tr_y_ = [0]*len(trs)
-	val_y_ = [0]*len(vs)
-	tes_y_ = [0]*len(tes)
+	tr_y_ = [0]*len(train_set)
+	val_y_ = [0]*len(valid_set)
+	tes_y_ = [0]*len(test_set)
 		
 	tr_y = theano.tensor.cast(make_shared_data(tr_y_), 'int32')
 	val_y = theano.tensor.cast(make_shared_data(val_y_), 'int32')
 	tes_y = theano.tensor.cast(make_shared_data(tes_y_), 'int32')
 
-	print 'Training set size: ', len(trs)
-        print 'Validation set size: ', len(vs)
-        print 'Test set size: ', len(tes) 		
+	print 'Training set size: ', len(train_set)
+        print 'Validation set size: ', len(valid_set)
+        print 'Test set size: ', len(test_set)
 	rval = [(tr_x, tr_y),(val_x, val_y),(tes_x, tes_y)]
 	return nfeats, rval

@@ -12,6 +12,38 @@
 # Example:
 #    sh generate_summary.sh Australia 07_222.xml query 2 200
 
+# If SEDA_DEBUG_MODE is set show detailed output
+if [ ! -z ${SEDA_DEBUG_MODE} ]
+then
+  set -ex
+fi
+
+# The function to describe how to run the script
+USAGE_STRING="Usage: $0 [-c <core_name>] [-f <input_text_file>] [-h help]"
+usage() { echo ${USAGE_STRING} 1>&2; exit 1; }
+
+while getopts ":i:o:h" o; do
+  case "${o}" in
+    c)  
+      CORE_NAME=${OPTARG}
+      ;;  
+    f)  
+      INPUT_FILE=${OPTARG}
+      ;;  
+    h)  
+      usage
+      ;;  
+    *)  
+      usage
+      ;;  
+  esac
+done
+shift $((OPTIND-1))
+
+if [ -z "${CORE_NAME}" ] || [ -z "${INPUT_FILE}" ]; then
+  usage
+fi
+
 
 DATASET_NAME="${1}"
 DOCUMENT_NAME="${2}"
